@@ -1,0 +1,4 @@
+- 此组件在 js 项目也在使用
+- js 项目很多没有用 less,大多都是 scss
+- 方便 js 项目接入,此组件用 css 书写样式。否则就得在 js 项目配置 less,和 less 变量
+- 注意 js 的 antd 版本和 ts 版本不同,不用处理 warning

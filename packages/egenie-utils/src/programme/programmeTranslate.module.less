@@ -1,0 +1,24 @@
+.translateContainer {
+  max-width: 400px;
+
+  > section {
+    display: flex;
+    align-items: flex-start;
+
+    span:nth-child(1) {
+      flex-shrink: 0;
+      width: 92px;
+      text-align: right;
+    }
+
+    span:nth-child(2) {
+      flex-shrink: 0;
+      margin-right: @egenie-spacing-xs;
+    }
+
+    span:nth-child(3) {
+      flex-grow: 1;
+      word-break: break-all;
+    }
+  }
+}

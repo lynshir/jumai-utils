@@ -1,0 +1,23 @@
+{
+  "name": "egenie-config",
+  "version": "2.1.9",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "father": "4.3.5"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "doctor": "father doctor",
+    "dev": "father dev",
+    "build": "father build",
+    "build:deps": "father prebundle"
+  },
+  "gitHead": "9d6fc5c64358dbaebb223fabd58f0ab45c6fe124"
+}

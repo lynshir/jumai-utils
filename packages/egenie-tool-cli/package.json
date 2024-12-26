@@ -1,0 +1,31 @@
+{
+  "name": "egenie-tool-cli",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "bin": {
+    "egenie-tool-cli": "bin/egenie-tool-cli.js"
+  },
+  "devDependencies": {
+    "father": "4.3.5"
+  },
+  "dependencies": {
+    "cac": "6.7.14",
+    "inquirer": "3.3.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "doctor": "father doctor",
+    "dev": "father dev",
+    "build": "father build",
+    "build:deps": "father prebundle"
+  },
+  "gitHead": "9d6fc5c64358dbaebb223fabd58f0ab45c6fe124"
+}

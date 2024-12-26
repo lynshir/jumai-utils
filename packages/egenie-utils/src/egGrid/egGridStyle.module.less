@@ -1,0 +1,535 @@
+@commonBlue: #1978ff;
+@fz16: 16px;
+@fz14: 14px;
+@fz13: 13px;
+@fz12: 12px;
+@clblack: #2b2e3e;
+@clf3: #f3f3f3;
+
+.edgGridSpin {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+
+  :global {
+    // 控制spin包裹容器的样式
+    .ant-spin-nested-loading {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ant-spin-container {
+      display: flex;
+      flex: 1;
+      height: 100%;
+    }
+  }
+}
+
+.btnHeaderWrap {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+
+  :global {
+    .ant-btn-group-sm > .ant-btn:first-child:not(:last-child),
+    .ant-btn-group-sm > span:first-child:not(:last-child) > .ant-btn {
+      border: 1px solid #c5c3cb;
+    }
+
+    .ant-btn-group-sm > .ant-btn:last-child:not(:first-child),
+    .ant-btn-group-sm > span:last-child:not(:first-child) > .ant-btn {
+      border: 1px solid #c5c3cb;
+      border-left-color: #e2e2e5;
+    }
+  }
+
+  .dropdownBtn {
+    height: 30px;
+    margin-right: 10px;
+    padding: 5px 8px;
+    border: 1px solid #c5c3cb;
+  }
+
+  .headerButtonDropDown {
+    width: auto !important;
+    margin-bottom: 5px;
+
+    button {
+      height: 30px !important;
+    }
+
+    :global {
+      .ant-btn {
+        border-color: #c5c3cb;
+      }
+    }
+  }
+
+  .headerButton {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    padding: 0 8px;
+    font-weight: 400;
+    font-size: 12px;
+    border: 1px solid #c5c3cb;
+  }
+
+  .btnExtraleftWrap {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 8px 16px;
+    color: #2b2e3e;
+    font-size: 12px;
+    background: rgba(251, 7, 31, 0.05);
+    border-radius: 2px;
+  }
+
+  .warnIcon {
+    margin-right: 4px;
+    color: #fa6866;
+    font-size: 14px;
+  }
+
+  .linkBtn {
+    margin-left: 4px;
+    color: #1978ff;
+    text-decoration: underline;
+  }
+
+  .btnExtraRight {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+  }
+}
+
+.headerButtonMenu {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.iconBtn {
+  width: 30px;
+  height: 30px;
+  margin-right: 4px;
+  padding: 4px;
+  color: #6d6e78;
+  font-size: 12px;
+  border: 1px solid #c5c3cb;
+}
+
+.mainSubStructureWrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 4px;
+
+  :global {
+    // 控制spin包裹容器的样式
+    .ant-spin-nested-loading {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ant-spin-container {
+      display: flex;
+      flex: 1;
+      height: 100%;
+    }
+
+    .ant-tabs-top > .ant-tabs-nav {
+      margin: 0 0 4px;
+    }
+
+    .ant-tabs-tab {
+      padding: 7px 16px;
+    }
+  }
+}
+
+.dragLine {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border: 2px solid #e2e2e5ff;
+  cursor: row-resize;
+}
+
+.btnGroup {
+  display: flex;
+  flex: 0 0 34px;
+}
+
+.mainContent {
+  display: flex;
+  flex: 1 1 100px;
+  // TODO: 减 subtab的高度和btn组的高度
+  // height: calc(100% - 350px - 34px);
+}
+
+.subContentTabs {
+  // TODO:通过drag控制高度
+  height: 100%;
+
+  :global {
+    .ant-tabs-content.ant-tabs-content-top,
+    .ant-tabs-tabpane {
+      height: 100%;
+    }
+    //.ant-tabs-nav-wrap{
+    //  flex: none !important;
+    //  flex-shrink: 0 !important;
+    //}
+    //
+    //.ant-tabs-extra-content {
+    //  flex: 2;
+    //}
+
+    .ant-tabs-tab {
+      box-sizing: border-box;
+      padding: 7px 16px;
+    }
+  }
+
+  .subTableContentPane {
+    display: flex;
+    height: 100%;
+  }
+
+  .subTableHeaderWrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3px;
+  }
+
+  .filterWrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    > label {
+      margin-right: -5px !important;
+    }
+  }
+
+  .filterSelect {
+    width: 135px;
+  }
+}
+
+// edg 是 egenie-data-grid的首字母
+.edgWrap {
+  display: flex;
+  flex: 1 1 100px;
+  flex-flow: column nowrap;
+
+  .edgf16 {
+    font-size: @fz16;
+  }
+
+  :global {
+    .rdg-header-row {
+      color: @clblack;
+    }
+
+    .rdg-cell-resizable::after {
+      border-right: 1px solid #eee;
+    }
+  }
+
+  .edgf14 {
+    font-size: @fz14;
+  }
+
+  .edg {
+    flex: 1;
+
+    .edgHightCursorRow {
+      background-color: #d3e5ff !important;
+    }
+
+    :global {
+      .rdg-cell {
+        font-size: @fz12;
+        border-right: 0;
+        border-bottom-color: rgb(240, 240, 240) !important;
+        user-select: text !important;
+        -webkit-touch-callout: default !important;
+      }
+
+      .rdg-summary-row {
+        .rdg-cell {
+          text-align: right;
+          border-top: 1px solid @clf3;
+          // border-right: 1px solid @clf3;
+        }
+      }
+
+      .rdg-row-selected {
+        background-color: #e9f2ff !important;
+
+        &.edgHightCursorRow {
+          background-color: #d3e5ff !important;
+        }
+      }
+
+      .rdg-cell-selected {
+        box-shadow: none !important;
+      }
+
+      .rdg-cell[aria-selected="true"] {
+        box-shadow: none !important;
+      }
+
+      .rdg-cell-frozen-last {
+        box-shadow: none !important;
+      }
+
+      .rdg-checkbox-input:checked + .rdg-checkbox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #1978ff !important;
+        border: none;
+        box-shadow: none !important;
+
+        &::after {
+          top: 3px;
+          left: 3px;
+          width: 8px;
+          height: 5px;
+          background: transparent;
+          border: 1px solid #fff;
+          border-top: none;
+          border-right: none;
+          transform: rotate(-45deg);
+          opacity: 1;
+          content: "";
+        }
+      }
+
+      .rdg-checkbox {
+        width: 16px;
+        height: 16px;
+        border: 1px solid #c5c3cb;
+        border-radius: 2px;
+      }
+    }
+
+    &.edgHasScroll {
+      :global {
+        .rdg-cell-frozen-last {
+          box-shadow: 3px 0 4px 0 rgba(218, 218, 218, 0.5) !important;
+        }
+      }
+    }
+  }
+
+  .edgPagerWrapper {
+    margin: 3px 0;
+
+    :global {
+      .ant-pagination,
+      .ant-select-selection-item,
+      .ant-select-item-option {
+        font-size: @fz12;
+      }
+
+      .ant-pagination.mini .ant-pagination-prev,
+      .ant-pagination.mini .ant-pagination-next,
+      .ant-pagination.mini .ant-pagination-item {
+        min-width: 20px;
+        height: 20px;
+        margin: 0;
+        line-height: 20px;
+      }
+    }
+  }
+
+  .edgPagerResetWrapper {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 10px;
+    font-size: @fz12;
+  }
+
+  .edgBlue {
+    color: @commonBlue;
+  }
+
+  .edgHasSelectedCount {
+    padding: 0 3px;
+  }
+
+  .edgReset {
+    margin-left: 12px;
+    cursor: pointer;
+  }
+
+  .emptyRows {
+    position: relative;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+
+    :global {
+      .ant-empty {
+        height: 120px;
+      }
+
+      .ant-empty-image {
+        height: 80px;
+      }
+
+      .ant-empty-img-default {
+        width: 100px;
+
+        img {
+          width: 120px;
+        }
+      }
+
+      .ant-btn,
+      .ant-empty-description {
+        font-size: @fz12;
+      }
+    }
+  }
+
+  .paginationWrap,
+  .refreshWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: @fz12;
+  }
+
+  .refreshWrap {
+    justify-content: space-around;
+    width: 40px;
+    cursor: pointer;
+  }
+
+  .checkAndSummaryWrapper {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .sumRowWrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin-left: 10px;
+    font-weight: 500;
+  }
+
+  .labelName {
+    margin-left: 5px;
+  }
+}
+
+.rdgCellValue {
+  display: flex;
+  justify-content: space-between;
+}
+
+.squareOutlined {
+  padding: 5px;
+  color: rgba(0, 0, 0, 0.25);
+  font-size: @egenie-font-size-md;
+  cursor: pointer;
+
+  &:hover {
+    color: @egenie-primary-color;
+  }
+}
+
+.collectWrap {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+
+  .collectDataWrap {
+    display: flex;
+    align-items: center;
+    color: @egenie-heading-color;
+    font-weight: 400;
+  }
+
+  .collectSplit {
+    display: inline-block;
+    width: 1px;
+    height: 11px;
+    margin: 0 16px;
+    background-color: #c5c3cb;
+  }
+}
+
+.splitLine {
+  width: 100%;
+  margin-bottom: 5px;
+  border-top: 1px solid @egenie-border-color-base;
+}
+
+.subTableHeaderButtonWrap {
+  display: flex;
+
+  .headerButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+    margin-left: 3px;
+    border: 1px solid #c5c3cb;
+  }
+
+  .headerButtonDropDown {
+    :global {
+      .ant-btn {
+        border-color: #c5c3cb;
+      }
+    }
+  }
+}
+
+.tabs {
+  display: flex;
+  height: 40px;
+  margin-bottom: 4px;
+}
+
+.headerExtraContentOfSubTable {
+  flex: 2;
+  box-sizing: border-box;
+  height: 100%;
+  margin-left: 4px;
+
+  >div {
+    height: 100%;
+    margin-top: unset !important;
+  }
+}
+
+.gridTabs {
+  overflow: hidden !important;
+
+  :global {
+    .ant-tabs-nav {
+      height: 40px !important;
+    }
+  }
+}

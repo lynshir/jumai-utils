@@ -1,0 +1,167 @@
+.mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100vw;
+  min-width: 1200px;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+  user-select: none;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.toolBar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-top: 24px;
+  padding-right: 36px;
+
+  .icon {
+    color: #f2f2f2;
+    font-size: 22px;
+    cursor: pointer;
+  }
+}
+
+.mainImageWrapper {
+  display: flex;
+  align-items: center;
+
+  .arrow {
+    z-index: 1;
+    color: #f2f2f2;
+    font-size: 40px;
+    cursor: pointer;
+  }
+
+  .mainImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1000px;
+    height: 600px;
+    margin: 0 50px;
+
+    &.moving {
+      > img {
+        cursor: grabbing;
+      }
+    }
+
+    > img {
+      max-width: 1000px;
+      max-height: 600px;
+      object-fit: contain;
+      transition: transform 0.3s cubic-bezier(0, 0, 0.25, 1);
+      -webkit-user-drag: none;
+    }
+  }
+}
+
+.imageListWrapper {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 60px;
+
+  .arrowWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 124px;
+    background-color: #282828;
+    border-radius: 2px;
+    cursor: pointer;
+
+    .icon {
+      color: #f2f2f2;
+      font-size: 24px;
+    }
+  }
+
+  .imageList {
+    max-width: 1000px;
+    margin: 0 12px;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .imageWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 124px;
+      height: 124px;
+      background-color: #fff;
+      border-radius: 2px;
+
+      &.active {
+        padding: 0;
+        border: 2px solid #f2270a;
+
+        .image {
+          max-width: 120px;
+          max-height: 120px;
+        }
+      }
+
+      .image {
+        max-width: 124px;
+        max-height: 124px;
+        border-radius: 2px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.imageMaskedWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  > img {
+    object-fit: contain;
+  }
+
+  .maskWrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  &:hover {
+    .maskWrapper {
+      opacity: 1;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+public
+dist
+coverage
+**/lib
+.umi
+.umi-production
+.dumi
+docs-dist
+packages/egenie-data-grid
+packages/generator-egenie-react-h5
+packages/generator-egenie-react-web

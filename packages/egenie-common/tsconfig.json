@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "es2019", //指定ECMAScript目标版本
+    "module": "esnext", //指定生成哪个模块系统代码
+    "outDir": "./dist" //重定向输出目录
+  },
+  "include": ["src", "../../react-app-env.d.ts"],
+  "exclude": ["node_modules", "lib", "es", "dist", "docs", "tests"]
+}
