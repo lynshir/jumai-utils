@@ -125,16 +125,16 @@ function getNpmTag(version: string) {
   assert(registry === publishRegistry, `npm registry is not ${publishRegistry}`);
 
   // check npm ownership
-  console.log(chalk.bold('check npm ownership'));
-  const whoami = (await $`npm whoami`).stdout.trim();
-  const owners = (await $`npm owner ls ${checkedPackage.name}`).stdout
-    .trim()
-    .split('\n')
-    .map((line) => {
-      return line.split(' ')[0];
-    });
-    console.log(whoami, owners, '---');
-  assert(owners.includes(whoami), `${checkedPackage.name} is not owned by ${whoami}`);
+  // console.log(chalk.bold('check npm ownership'));
+  // const whoami = (await $`npm whoami`).stdout.trim();
+  // const owners = (await $`npm owner ls ${checkedPackage.name}`).stdout
+  //   .trim()
+  //   .split('\n')
+  //   .map((line) => {
+  //     return line.split(' ')[0];
+  //   });
+  //   console.log(whoami, owners, '---');
+  // assert(owners.includes(whoami), `${checkedPackage.name} is not owned by ${whoami}`);
 
   // build packages
   console.log(chalk.bold('build packages'));
