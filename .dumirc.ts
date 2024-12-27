@@ -13,28 +13,28 @@ export default defineConfig({
       default: 'dark',
       switch: true,
     },
-    socialLinks: { gitlab: 'http://192.168.200.111:9980/egFrontend/egenie-utils' },
+    socialLinks: { gitlab: 'http://192.168.200.111:9980/egFrontend/jumai-utils' },
     logo: 'https://hw-front.ejingling.cn/customer-source/common/favicon.ico',
     nav: [
       {
         title: '基础包',
-        link: '/packages/egenie-bundler-cli',
+        link: '/packages/jumai-bundler-cli',
       },
       {
-        title: 'egenie-common',
-        link: '/egenie-common/helper',
+        title: 'jumai-common',
+        link: '/jumai-common/helper',
       },
       {
-        title: 'egenie-utils',
-        link: '/egenie-utils/export',
+        title: 'jumai-utils',
+        link: '/jumai-utils/export',
         children: [
           {
             title: '查询方案',
-            link: '/egenie-utils/programme/guide',
+            link: '/jumai-utils/programme/guide',
           },
           {
             title: '表格',
-            link: '/egenie-utils/table/synopsis',
+            link: '/jumai-utils/table/synopsis',
           },
         ],
       },

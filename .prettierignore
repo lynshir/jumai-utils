@@ -3,8 +3,8 @@
 **/*.jsx
 **.ts
 **.tsx
-packages/egenie-utils/docs
-packages/egenie-data-grid
+packages/jumai-utils/docs
+packages/jumai-data-grid
 public
 dist
 coverage

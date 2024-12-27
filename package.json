@@ -11,7 +11,7 @@
     "typescript": "4.2.4",
     "turbo": "^1.10.16",
     "dumi": "^2.2.13",
-    "egenie-code-style": "workspace:*"
+    "jumai-code-style": "workspace:*"
   },
   "husky": {
     "hooks": {

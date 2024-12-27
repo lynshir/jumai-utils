@@ -6,6 +6,6 @@ coverage
 .umi-production
 .dumi
 docs-dist
-packages/egenie-data-grid
-packages/generator-egenie-react-h5
-packages/generator-egenie-react-web
+packages/jumai-data-grid
+packages/generator-jumai-react-h5
+packages/generator-jumai-react-web

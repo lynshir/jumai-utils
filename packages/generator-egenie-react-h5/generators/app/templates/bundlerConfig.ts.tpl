@@ -1,4 +1,4 @@
-import type { UserConfig } from 'egenie-bundler-cli';
+import type { UserConfig } from 'jumai-bundler-cli';
 
 // const target = 'https://cdtestcloudwms.ejingling.cn/';
 const target = 'https://cduatcloudwms.ejingling.cn/';

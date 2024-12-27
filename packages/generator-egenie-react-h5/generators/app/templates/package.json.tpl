@@ -28,8 +28,8 @@
     "@types/react-router": "^5.1.8",
     "@types/react-router-dom": "^5.1.6",
     "cross-env": "^7.0.3",
-    "egenie-bundler-cli": "2.1.9",
-    "egenie-code-style": "2.1.9",
+    "jumai-bundler-cli": "2.1.9",
+    "jumai-code-style": "2.1.9",
     "mockjs": "^1.1.0",
     "typescript": "4.2.4"
   },
@@ -58,9 +58,9 @@
     ]
   },
   "scripts": {
-    "dev-vite": "egenie-bundler-cli dev --vite --open",
-    "dev-webpack": "egenie-bundler-cli dev --open",
-    "build": "egenie-bundler-cli build",
+    "dev-vite": "jumai-bundler-cli dev --vite --open",
+    "dev-webpack": "jumai-bundler-cli dev --open",
+    "build": "jumai-bundler-cli build",
     "lint-staged": "lint-staged --allow-empty",
     "lint:style-less": "stylelint --cache --quiet --fix \"src/**/*.less\" --syntax less",
     "lint:js": "eslint --fix --cache --quiet --ext .js,.jsx,.ts,.tsx .",

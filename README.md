@@ -2,9 +2,9 @@
 
 ## css module 说明
 
-- egenie-common 和 egenie-utils 调整为 bundles 打包对 css module 有影响
+- jumai-common 和 jumai-utils 调整为 bundles 打包对 css module 有影响
 - 理论上组件库就不应该开启 css module,但是兼容原来,后面再调整
-- egenie-common 和 egenie-utils 需要开启 css module,需要样式文件加 module 后缀
+- jumai-common 和 jumai-utils 需要开启 css module,需要样式文件加 module 后缀
 
 ## 组件库核心技术说明
 
@@ -31,7 +31,7 @@
 
 ### [father4](https://www.npmjs.com/package/father)
 
-- 包打包工具,主要涉及项目 egenie-base、egenie-sentry、egenie-vite-config、egenie-common、egenie-utils
+- 包打包工具,主要涉及项目 jumai-base、jumai-sentry、egenie-vite-config、jumai-common、jumai-utils
 
 ## 下载流程
 

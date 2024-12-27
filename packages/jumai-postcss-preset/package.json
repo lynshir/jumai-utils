@@ -1,0 +1,28 @@
+{
+  "name": "jumai-postcss-preset",
+  "version": "1.0.5",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "postcss": "8.4.31",
+    "postcss-flexbugs-fixes": "5.0.2",
+    "postcss-preset-env": "9.3.0",
+    "px2rem": "0.5.0"
+  },
+  "devDependencies": {
+    "father": "4.3.5"
+  },
+  "scripts": {
+    "doctor": "father doctor",
+    "dev": "father dev",
+    "build": "father build",
+    "build:deps": "father prebundle"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

@@ -1,1 +1,1 @@
-module.exports = require('egenie-code-style').commitlint;
+module.exports = require('jumai-code-style').commitlint;

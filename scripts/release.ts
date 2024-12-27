@@ -25,23 +25,23 @@ interface PublishPackagesInfo {
 async function updateGeneratorPackages(version: string) {
   const data = [
     {
-      generatorTplPath: path.resolve(cwd, 'packages/generator-egenie-react-h5/generators/app/templates/package.json.tpl'),
+      generatorTplPath: path.resolve(cwd, 'packages/generator-jumai-react-h5/generators/app/templates/package.json.tpl'),
       updateDependencies: [],
       updateDevDependencies: [
-        'egenie-bundler-cli',
-        'egenie-code-style',
+        'jumai-bundler-cli',
+        'jumai-code-style',
       ],
     },
     {
-      generatorTplPath: path.resolve(cwd, 'packages/generator-egenie-react-web/generators/app/templates/package.json.tpl'),
+      generatorTplPath: path.resolve(cwd, 'packages/generator-jumai-react-web/generators/app/templates/package.json.tpl'),
       updateDependencies: [
-        'egenie-utils',
-        'egenie-common',
+        'jumai-utils',
+        'jumai-common',
       ],
       updateDevDependencies: [
-        'egenie-bundler-cli',
-        'egenie-code-style',
-        'egenie-config',
+        'jumai-bundler-cli',
+        'jumai-code-style',
+        'jumai-config',
       ],
     },
   ];

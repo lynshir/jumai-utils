@@ -1,4 +1,4 @@
 module.exports = {
-  extends: require.resolve('egenie-code-style/stylelint'),
+  extends: require.resolve('jumai-code-style/stylelint'),
   rules: {}
 }

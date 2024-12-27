@@ -24,6 +24,6 @@ dist
 
 *.log
 packages/zhouhaifei-utils/es
-packages/packages/egenie-data-grid/tmp
-packages/packages/egenie-data-grid/lib
+packages/packages/jumai-data-grid/tmp
+packages/packages/jumai-data-grid/lib
 .history/

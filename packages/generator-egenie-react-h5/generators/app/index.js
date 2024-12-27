@@ -7,7 +7,7 @@ module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user
     this.log(
-      yosay(`Welcome to the slick ${chalk.red('generator-egenie-react-h5')} generator!`)
+      yosay(`Welcome to the slick ${chalk.red('generator-jumai-react-h5')} generator!`)
     );
 
     const prompts = [];
