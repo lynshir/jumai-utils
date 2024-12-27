@@ -133,6 +133,7 @@ function getNpmTag(version: string) {
     .map((line) => {
       return line.split(' ')[0];
     });
+    console.log(whoami, owners, '---');
   assert(owners.includes(whoami), `${checkedPackage.name} is not owned by ${whoami}`);
 
   // build packages
