@@ -9,8 +9,8 @@
     "antd": "4.24.7",
     "axios": "0.28.0",
     "classnames": "^2.2.6",
-    "jumai-utils": "1.0.6",
-    "jumai-common": "1.0.6",
+    "jumai-utils": "1.0.7",
+    "jumai-common": "1.0.7",
     "lodash": "4.17.21",
     "mobx": "5.15.7",
     "mobx-react": "6.3.1",
@@ -34,9 +34,9 @@
     "@types/react-router-dom": "^5.1.6",
     "cross-env": "^7.0.3",
     "typescript": "4.2.4",
-    "jumai-bundler-cli": "1.0.6",
-    "jumai-code-style": "1.0.6",
-    "jumai-config": "1.0.6",
+    "jumai-bundler-cli": "1.0.7",
+    "jumai-code-style": "1.0.7",
+    "jumai-config": "1.0.7",
     "mockjs": "^1.1.0"
   },
   "resolutions": {
