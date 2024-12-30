@@ -24,7 +24,6 @@ import { optimization } from './optimization';
 import { preloadPlugin } from './preloadPlugin';
 import { progressPlugin } from './progressPlugin';
 import { reactRefreshPlugin } from './reactRefreshPlugin';
-import { sentryPlugin } from './sentryPlugin';
 import { speedMeasurePlugin } from './speedMeasurePlugin';
 import { unusedPlugin } from './unusedPlugin ';
 
@@ -166,7 +165,6 @@ export async function config(options: WebpackConfigOptions): Promise<Configurati
   reactRefreshPlugin(applyOptions);
   compressPlugin(applyOptions);
   optimization(applyOptions);
-  sentryPlugin(applyOptions);
   devServerPlugin(applyOptions);
 
   // chain webpack
