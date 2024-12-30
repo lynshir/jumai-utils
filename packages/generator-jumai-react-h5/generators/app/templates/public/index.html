@@ -27,17 +27,6 @@
 <script type="text/javascript" src="<%= process.env.REACT_APP_OSS %>customer-source/common/mobxReactLite.production.min.js?v=2.2.2"></script>
 <script type="text/javascript" src="<%= process.env.REACT_APP_OSS %>customer-source/common/mobxReact.production.min.js?v=6.3.1"></script>
 <% } %>
-<% if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_SENTRY_DSN && process.env.REACT_APP_API_VERSION) { %>
-<script
-  type="text/javascript"
-  id="jumai-sentry"
-  async="async"
-  data-dsn="<%= process.env.REACT_APP_SENTRY_DSN %>"
-  data-release="<%= process.env.REACT_APP_API_VERSION %>"
-  src="<%= process.env.REACT_APP_OSS %>customer-source/common/sentry/pc.umd.min.js"
->
-</script>
-<% } %>
 <script type="text/javascript" src="<%= process.env.REACT_APP_OSS %>customer-source/common/moment-2-29-2/moment.min.js"></script>
 <script type="text/javascript" src="<%= process.env.REACT_APP_OSS %>customer-source/common/axios-0-28-0/axios.min.js"></script>
 <script type="text/javascript" src="<%= process.env.REACT_APP_OSS %>customer-source/common/lodash-4-17-21/lodash.min.js"></script>
