@@ -223,7 +223,7 @@ export class ImportModel {
 
   public openMissionCenter = () => {
     try {
-      top.egenie.openTab('/egenie-ts-baseinfo/exportList/index?type=import', 'export_task_center', '导入导出任务中心', 'zc_pfs');
+      top.egenie.openTab('/jumai-ts-baseinfo/exportList/index?type=import', 'export_task_center', '导入导出任务中心', 'zc_pfs');
     } catch (e) {
       console.error(e);
     }

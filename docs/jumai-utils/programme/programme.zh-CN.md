@@ -27,7 +27,7 @@ toc: content
 - 默认值: 无
 
 ```ts
-const path = '/egenie-cloud-wms/index';
+const path = '/jumai-cloud-wms/index';
 const moduleName = 'egenieCloudWmsIndex';
 ```
 

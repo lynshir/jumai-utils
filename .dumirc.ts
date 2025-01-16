@@ -2,7 +2,7 @@ import { defineConfig } from 'dumi';
 
 export default defineConfig({
   title: '衫数pc文档',
-  favicons: ['https://hw-front.ejingling.cn/customer-source/common/favicon.ico'],
+  favicons: ['https://front.jmaihome.cn/customer-source/common/favicon.ico'],
   outputPath: 'docs-dist',
   hash: true,
   themeConfig: {
@@ -14,7 +14,7 @@ export default defineConfig({
       switch: true,
     },
     socialLinks: { gitlab: 'http://192.168.200.111:9980/egFrontend/jumai-utils' },
-    logo: 'https://hw-front.ejingling.cn/customer-source/common/favicon.ico',
+    logo: 'https://front.jmaihome.cn/customer-source/common/favicon.ico',
     nav: [
       {
         title: '基础包',

@@ -152,7 +152,7 @@ export class ExportStore {
   private handleGotoExportCenter = () => {
     try {
       // eslint-disable-next-line no-restricted-globals
-      top.egenie.openTab('/egenie-ts-baseinfo/exportList/index', 'export_task_center', '导出任务中心', 'zc_pfs');
+      top.egenie.openTab('/jumai-ts-baseinfo/exportList/index', 'export_task_center', '导出任务中心', 'zc_pfs');
     } catch (err) {
       console.log(err);
     }
