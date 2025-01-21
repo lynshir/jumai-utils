@@ -1,0 +1,47 @@
+.content {
+  width: 100%;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.contentBase {
+  :global {
+    .filterLabel,
+    .filterSelect .ant-select-selector,
+    .filterSelect .ant-select,
+    .filterInputNumberGroup .ant-select,
+    .filterInputNumberGroup .filterInputNumberGroupContent,
+    .filterInputNumberGroup .filterInputNumberGroupContent .ant-input-number,
+    .filterInputNumberGroup .filterInputNumberGroupContent .ant-input-number input,
+    .filterCascader .ant-cascader,
+    .filterInputOrSelect,
+    .filterInputAndSelect,
+    .filterDateSelect > header,
+    .filterDateNormal > section,
+    .filterTreeSelect .ant-select {
+      height: @egenie-height-md !important;
+    }
+
+    .filterLabel {
+      justify-content: flex-end;
+    }
+
+    .filterInputNumberGroup .ant-select {
+      border-top: 1px solid @egenie-border-color-base;
+      border-bottom: 1px solid @egenie-border-color-base;
+      border-left: 1px solid @egenie-border-color-base;
+    }
+  }
+}
+
+.collapseContainer {
+  :global {
+    .filterLabel {
+      justify-content: flex-end;
+    }
+  }
+}

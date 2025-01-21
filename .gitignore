@@ -1,0 +1,29 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.eslintcache
+.stylelintcache
+.turbo
+
+# dependencies
+node_modules
+.idea
+# testing
+coverage
+.umi
+.umi-production
+.dumi
+
+docs-dist
+dist
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+*.log
+packages/zhouhaifei-utils/es
+packages/packages/jumai-data-grid/tmp
+packages/packages/jumai-data-grid/lib
+.history/

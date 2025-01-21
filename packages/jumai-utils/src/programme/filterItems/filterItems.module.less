@@ -1,0 +1,427 @@
+.common-select {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 100%;
+}
+
+.filterInputOrRadio {
+  display: flex;
+  align-items: center;
+
+  :global {
+    .ant-radio-group {
+      width: 100%;
+
+      .ant-radio-wrapper {
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        > span:last-of-type {
+          display: flex;
+          flex-grow: 1;
+          align-items: center;
+          height: @egenie-height-sm;
+
+          .ant-input {
+            flex-grow: 1;
+            width: auto;
+            height: 100%;
+            margin-left: @egenie-spacing-xs;
+            padding-top: 0;
+            padding-bottom: 0;
+            background: #fff;
+            border-radius: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.filterRadio {
+  :global {
+    .ant-radio-group {
+      display: block;
+
+      .ant-radio-wrapper {
+        display: block;
+        width: 100%;
+        margin-bottom: @egenie-spacing-xss;
+      }
+    }
+  }
+}
+
+.filterCheckbox {
+  :global {
+    .ant-checkbox-group {
+      display: block;
+
+      .ant-checkbox-wrapper {
+        display: flex;
+        width: 100%;
+        margin-bottom: @egenie-spacing-xss;
+      }
+    }
+  }
+}
+
+:global {
+  .filterLabel {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    padding-right: @egenie-spacing-xss;
+    padding-left: @egenie-spacing-xss;
+    transition: all 0.3s linear;
+
+    h3 {
+      font-weight: 400 !important;
+      font-size: @egenie-font-size-sm !important;
+    }
+  }
+
+  .filterBoolean {
+    display: flex;
+    align-items: center;
+
+    .ant-radio-group {
+      display: flex;
+      align-items: center;
+      margin-left: @egenie-spacing-xs;
+    }
+
+    .ant-radio-wrapper {
+      display: flex;
+      align-items: center;
+      line-height: 1;
+
+      .ant-radio {
+        top: 0;
+      }
+    }
+  }
+
+  .filterInput {
+    display: flex;
+    align-items: center;
+
+    .ant-input-affix-wrapper {
+      height: @egenie-height-md !important;
+      padding-top: 0;
+      padding-bottom: 0;
+      border: 1px solid @egenie-border-color-base !important;
+    }
+  }
+
+  .filterPatternSearch {
+    .ant-radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+
+      .ant-radio-wrapper {
+        display: flex;
+        align-items: center;
+        height: @egenie-height-sm;
+      }
+    }
+
+    .ant-input-affix-wrapper {
+      height: @egenie-height-md !important;
+      margin-top: @egenie-spacing-xss;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  .filterSelect {
+    display: flex;
+    align-items: center;
+
+    :global {
+      .ant-select {
+        .ant-select-selector {
+          display: flex;
+          align-items: center;
+
+          .ant-select-selection-overflow {
+            flex-wrap: nowrap;
+          }
+        }
+
+        flex-grow: 1;
+        background-color: #fff;
+        border: 1px solid @egenie-border-color-base;
+        border-radius: @egenie-border-radius-base;
+      }
+    }
+  }
+
+  .filterInputNumberGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .ant-select {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      border-radius: @egenie-border-radius-base 0 0 @egenie-border-radius-base;
+    }
+
+    .filterInputNumberGroupContent {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+      border: 1px solid @egenie-border-color-base;
+
+      > span {
+        width: 21px;
+        font-weight: 400;
+        text-align: center;
+        border-top: 1px solid @egenie-input-placeholder-color;
+      }
+
+      .ant-input-number-handler-wrap {
+        border-top: 1px solid @egenie-border-color-base;
+        border-bottom: 1px solid @egenie-border-color-base;
+      }
+
+      .ant-input-number {
+        input {
+          text-align: center;
+        }
+
+        width: 50%;
+      }
+    }
+  }
+
+  .filterCascader {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .ant-cascader {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0 @egenie-spacing-sm !important;
+      overflow: hidden;
+      border: 1px solid @egenie-border-color-base !important;
+      border-radius: @egenie-border-radius-base;
+    }
+  }
+
+  .filterTreeSelect {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    > section {
+      flex-grow: 1;
+      flex-shrink: 0;
+      align-items: center;
+
+      .ant-select {
+        .ant-select-selector {
+          width: 100%;
+        }
+
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        border: 1px solid @egenie-border-color-base;
+        border-radius: @egenie-border-radius-base;
+      }
+    }
+  }
+
+  .filterInputOrSelect {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    > section {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      border: 1px solid @egenie-border-color-base;
+      border-radius: @egenie-border-radius-base;
+
+      :global {
+        .ant-select {
+          border-left: 1px solid @egenie-border-color-base;
+          transition: all 0.3s linear;
+
+          .common-select();
+        }
+      }
+    }
+  }
+
+  .filterInputAndSelect {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: 1px solid @egenie-border-color-base;
+    border-radius: @egenie-border-radius-base;
+
+    :global {
+      .ant-select-selector {
+        padding: 0 @egenie-spacing-xss !important;
+      }
+
+      .ant-input-affix-wrapper {
+        height: @egenie-height-md !important;
+        padding-top: 0;
+        padding-bottom: 0;
+        border: none !important;
+      }
+
+      .ant-select {
+        border-right: 1px solid @egenie-border-color-base;
+        transition: all 0.3s linear;
+
+        .common-select();
+      }
+    }
+  }
+
+  .filterDateSelect {
+    background: @egenie-combine-filter-bg;
+    border-radius: @egenie-border-radius-base;
+
+    > header {
+      display: flex;
+      align-items: center;
+
+      > section {
+        height: 100%;
+        border-right: 1px solid @border-color-base;
+      }
+
+      :global {
+        .ant-select {
+          background: #fff;
+          border-top: 1px solid @egenie-combine-filter-bg;
+          border-right: 1px solid @egenie-combine-filter-bg;
+          .common-select();
+        }
+      }
+    }
+
+    > section {
+      padding: @egenie-spacing-sm;
+
+      > div {
+        display: flex;
+        align-items: center;
+        height: 26px;
+        padding-left: @egenie-spacing-xs;
+        color: @egenie-heading-color;
+        font-weight: 400;
+      }
+
+      :global {
+        .ant-picker {
+          width: 100%;
+          background: #fff !important;
+          border: 1px solid @egenie-border-color-base;
+          border-radius: @egenie-border-radius-base;
+        }
+      }
+    }
+  }
+
+  .filterDateNormal {
+    display: flex;
+    align-items: center;
+
+    > section {
+      position: relative;
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+      border: 1px solid @egenie-border-color-base;
+      border-radius: @egenie-border-radius-base;
+
+      .ant-picker {
+        width: 100%;
+        height: 100%;
+        padding-right: @egenie-spacing-xss;
+        padding-left: @egenie-spacing-xss;
+        background: #fff !important;
+        border: none;
+
+        .ant-picker-range-separator {
+          padding-right: @egenie-spacing-xss;
+          padding-left: @egenie-spacing-xss;
+        }
+      }
+    }
+  }
+}
+
+.dropdownDate {
+  :global {
+    .ant-picker-footer {
+      .ant-picker-footer-extra {
+        border: none;
+      }
+
+      .ant-picker-ranges {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
+.dateSelect {
+  padding: @egenie-spacing-xs 0;
+
+  :global {
+    .ant-tag {
+      margin-right: @egenie-spacing-xss;
+      padding-right: @egenie-spacing-xss;
+      padding-left: @egenie-spacing-xss;
+    }
+  }
+}
+
+.multipleInputWrapper {
+  &.active {
+    background: #ddebff;
+  }
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: @egenie-combine-filter-bg;
+  border-radius: 2px;
+  transition: all 0.3s linear;
+}
+
+.multipleInputFooter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: @egenie-height-md;
+}
+
+.filterSelectChooseAll {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: @egenie-height-lg;
+  padding: 0 @egenie-spacing-xs;
+  border-top: 1px solid @egenie-border-color-base;
+}

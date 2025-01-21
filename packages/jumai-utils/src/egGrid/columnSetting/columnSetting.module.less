@@ -1,0 +1,110 @@
+.scrollContainer {
+  width: 100%;
+  overflow: hidden;
+}
+
+.scrollWrapper {
+  position: relative;
+  z-index: 1;
+  width: calc(100% + 25px);
+  height: 400px;
+  overflow: auto;
+  overflow-x: hidden;
+  background: #fff no-repeat;
+
+  /* stylelint-disable*/
+  background-image: -webkit-radial-gradient(50% 0, farthest-side, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)),
+    -webkit-radial-gradient(50% 100%, farthest-side, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+  background-image: -moz-radial-gradient(50% 0, farthest-side, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)),
+    -moz-radial-gradient(50% 100%, farthest-side, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+  background-image: radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)), radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+  /* stylelint-enable */
+  background-position: 0 0, 0 100%;
+  background-size: 100% 12px;
+}
+
+.scrollWrapper::before,
+.scrollWrapper::after {
+  position: relative;
+  z-index: -1;
+  display: block;
+  height: 30px;
+  margin: 0 0 -30px;
+  background: -webkit-linear-gradient(top, #fff, #fff 30%, rgba(255, 255, 255, 0));
+  background: -moz-linear-gradient(top, #fff, #fff 30%, rgba(255, 255, 255, 0));
+  background: linear-gradient(to bottom, #fff, #fff 30%, rgba(255, 255, 255, 0));
+  content: "";
+}
+
+.scrollWrapper::after {
+  margin: -30px 0 0;
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), #fff 70%, #fff);
+  background: -moz-linear-gradient(top, rgba(255, 255, 255, 0), #fff 70%, #fff);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff 70%, #fff);
+}
+
+.itemsContainer {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+
+.columnItemWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 234px;
+  height: 40px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  padding: 0 12px;
+  background: #fff;
+  border: 1px solid #e2e2e5;
+  border-radius: 2px;
+  cursor: move;
+
+  &:hover {
+    background: rgba(25, 120, 255, 0.03);
+  }
+
+  &:nth-child(3n) {
+    margin-right: 0;
+  }
+
+  .label {
+    width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .orderNoWrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .orderNo {
+    margin-right: 4px;
+  }
+}
+
+.tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 182px;
+  height: 30px;
+  margin-bottom: 16px;
+  color: #2b2e3e;
+  background: rgba(251, 7, 31, 0.05);
+  border-radius: 2px;
+}
+
+.lockedColumnItem {
+  background: #f6f7f8;
+}
+
+// 修复拖拽时空白
+.sortableHelper {
+  z-index: 9999;
+}

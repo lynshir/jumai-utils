@@ -1,0 +1,11 @@
+public
+dist
+coverage
+**/lib
+.umi
+.umi-production
+.dumi
+docs-dist
+packages/jumai-data-grid
+packages/generator-jumai-react-h5
+packages/generator-jumai-react-web

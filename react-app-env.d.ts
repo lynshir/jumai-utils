@@ -1,0 +1,48 @@
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: 'development' | 'production';
+    CLI_TOOL: 'webpack' | 'vite';
+    PUBLIC_URL: string;
+    REACT_APP_OSS: string;
+  }
+}
+
+// images
+declare module '*.svg'
+declare module '*.bmp';
+declare module '*.gif';
+declare module '*.jpg';
+declare module '*.jpeg';
+declare module '*.png';
+declare module '*.webp';
+declare module '*.svg';
+declare module '*.ico';
+
+// styles
+declare module '*.css';
+declare module '*.less';
+declare module '*.scss';
+declare module '*.sass';
+declare module '*.styl';
+declare module '*.stylus'
+
+declare module '*.mp4';
+declare module '*.webm';
+declare module '*.ogg';
+declare module '*.mp3';
+declare module '*.wav';
+declare module '*.flac';
+declare module '*.aac';
+declare module '*.opus';
+
+// fonts
+declare module '*.woff';
+declare module '*.woff2';
+declare module '*.eot';
+declare module '*.ttf';
+declare module '*.otf';
+
+// other
+declare module '*.webmanifest';
+declare module '*.pdf';
+declare module '*.txt';
