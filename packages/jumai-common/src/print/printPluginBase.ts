@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import type { PrintAbstract, CommonPrintParams } from './types';
-import { getUUID, isSocketConnected, handleSocketDisconnectNotification, validateData } from './utils';
+import { getUUID, handleSocketDisconnectNotification, validateData } from './utils';
 
 interface RequestProtocol {
   cmd: string;
@@ -36,9 +36,7 @@ export class PrintPluginBase implements PrintAbstract {
   private isConnected = false;
 
   private sendToPrinter(request: RequestProtocol): Promise<any> {
-    return this.connectWebsocket().then(r => new Promise((resolve, reject) => {
-      this.socket.send(JSON.stringify(request));
-    }));
+    return this.connectWebsocket().then(r => this.socket.send(JSON.stringify(request)));
   }
 
   public connectWebsocket = (): Promise<void> => {
