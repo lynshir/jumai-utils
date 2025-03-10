@@ -35,8 +35,18 @@ export class PrintPluginBase implements PrintAbstract {
 
   private isConnected = false;
 
-  private sendToPrinter(request: RequestProtocol): Promise<any> {
-    return this.connectWebsocket().then(r => this.socket.send(JSON.stringify(request)));
+  private async sendToPrinter(request: RequestProtocol): Promise<any> {
+    await this.connectWebsocket();
+    return new Promise((resolve, reject) => {
+      this.taskRequest.set(request.requestID, {
+        request,
+        resolve,
+        reject,
+      });
+      if (isSocketConnected(this.socket, this.openError)) {
+        this.socket.send(JSON.stringify(request));
+      }
+    });
   }
 
   public connectWebsocket = (): Promise<void> => {
