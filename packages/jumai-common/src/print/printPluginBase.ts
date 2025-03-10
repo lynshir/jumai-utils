@@ -33,80 +33,64 @@ export class PrintPluginBase implements PrintAbstract {
   // eslint-disable-next-line @typescript-eslint/ban-types
   private taskRequest = new Map<string, { request: RequestProtocol; resolve?: Function; reject?: Function; }>();
 
-  private taskQueue: RequestProtocol[] = [];
-
   private isConnected = false;
 
   private sendToPrinter(request: RequestProtocol): Promise<any> {
-    this.doConnect();
-
-    return new Promise((resolve, reject) => {
-      this.taskRequest.set(request.requestID, {
-        request,
-        resolve,
-        reject,
-      });
-
-      if (isSocketConnected(this.socket, this.openError)) {
-        this.socket.send(JSON.stringify(request));
-      } else {
-        this.taskQueue.push(request);
-      }
-    });
+    return this.connectWebsocket().then(r => new Promise((resolve, reject) => {
+      this.socket.send(JSON.stringify(request));
+    }));
   }
 
-  private doConnect = () => {
-    if (this.socket) {
-      return;
-    }
+  public connectWebsocket = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const initWebsocket = () =>{
+        if (!this.socket) {
+          this.socket = new WebSocket(this.socketUrl);
+          console.log('建立websocket连接');
 
-    this.socket = new WebSocket(this.socketUrl);
+          // open
+          this.socket.onopen = (event) => {
+            console.log(`browser onopen event:${JSON.stringify(event)}`);
+            this.isConnected = true;
+          };
 
-    // open
-    this.socket.onopen = (event) => {
-      console.log(`browser onopen event:${JSON.stringify(event)}`);
-      this.isConnected = true;
-      this.refresh();
-    };
+          // 错误
+          this.socket.onerror = (event): void => {
+            console.log(`browser onerror event:${JSON.stringify(event)}`);
+            message.error({
+              content: this.openError,
+              key: this.openError,
+            });
+          };
 
-    // 错误
-    this.socket.onerror = (event): void => {
-      console.log(`browser onerror event:${JSON.stringify(event)}`);
-      message.error({
-        content: this.openError,
-        key: this.openError,
-      });
+          // 关闭
+          this.socket.onclose = (event) => {
+            console.log(`browser onclose event:${JSON.stringify(event)}`);
+            if (this.isConnected) {
+              handleSocketDisconnectNotification();
+            }
+          };
 
-      for (const value of this.taskRequest.values()) {
-        if (value.reject) {
-          value.reject();
+          // 监听消息
+          this.socket.onmessage = this.onmessage;
+
+        } else {
+          console.log('打印机websocket' + this.socketUrl + '已连接');
+        }
+        if(this.socket?.readyState === 1) {
+          console.log('连接打印机ready')
+          resolve();
+        }
+        else{
+          console.log('等待连接打印机')
+          setTimeout(() => {
+            initWebsocket();
+          }, 500);
         }
       }
-
-      this.taskRequest.clear();
-    };
-
-    // 关闭
-    this.socket.onclose = (event) => {
-      console.log(`browser onclose event:${JSON.stringify(event)}`);
-      if (this.isConnected) {
-        handleSocketDisconnectNotification();
-      }
-    };
-
-    // 监听消息
-    this.socket.onmessage = this.onmessage;
-  };
-
-  private refresh = () => {
-    if (isSocketConnected(this.socket, this.openError)) {
-      const taskQueue = this.taskQueue;
-      this.taskQueue = [];
-      taskQueue.forEach((item) => {
-        this.socket.send(JSON.stringify(item));
-      });
-    }
-  };
+      initWebsocket();
+    })
+  }
 
   private onmessage = (event: MessageEvent) => {
     const response: Response = JSON.parse(event.data);
