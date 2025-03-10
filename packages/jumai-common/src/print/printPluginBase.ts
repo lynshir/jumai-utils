@@ -43,9 +43,7 @@ export class PrintPluginBase implements PrintAbstract {
         resolve,
         reject,
       });
-      if (isSocketConnected(this.socket, this.openError)) {
-        this.socket.send(JSON.stringify(request));
-      }
+      this.socket.send(JSON.stringify(request));
     });
   }
 
