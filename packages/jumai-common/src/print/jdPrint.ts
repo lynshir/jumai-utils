@@ -86,51 +86,62 @@ export class JdPrint implements PrintAbstract {
   // eslint-disable-next-line @typescript-eslint/ban-types
   private taskRequest = new Map<string, { request: RequestProtocol; resolve?: Function; reject?: Function; }>();
 
-  private taskQueue = [] as RequestProtocol[];
-
   private isConnected = false;
 
-  private connect = () => {
-    if (this.socket) {
-      return;
-    }
+  public connectWebsocket = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const initWebsocket = () => {
+        if (!this.socket) {
+          this.socket = new WebSocket(this.socketUrl);
+          console.log('京东打印websocket连接' + this.socketUrl);
 
-    this.socket = new WebSocket(this.socketUrl);
+          // open
+          this.socket.onopen = (event) => {
+            console.log(`browser onopen event:${JSON.stringify(event)}`);
+            this.isConnected = true;
+          };
 
-    // 打开Socket
-    this.socket.onopen = (event) => {
-      console.log(`京东打印 onopen event:${JSON.stringify(event)}`);
-      this.isConnected = true;
-      this.refresh();
-    };
+          // 错误
+          this.socket.onerror = (event): void => {
+            console.log(`browser onerror event:${JSON.stringify(event)}`);
+            message.error({
+              content: this.openError,
+              key: this.openError,
+            });
 
-    // 监听消息
-    this.socket.onmessage = this.onmessage;
+            for (const value of this.taskRequest.values()) {
+              if (value.reject) {
+                value.reject();
+              }
+            }
+            this.taskRequest.clear();
+          };
 
-    // 监听Socket的关闭
-    this.socket.onclose = (event) => {
-      console.log(`京东打印 onclose event:${JSON.stringify(event)}`);
-      if (this.isConnected) {
-        handleSocketDisconnectNotification();
-      }
-    };
+          // 关闭
+          this.socket.onclose = (event) => {
+            console.log(`京东打印 browser onclose event:${JSON.stringify(event)}`);
+            if (this.isConnected) {
+              handleSocketDisconnectNotification();
+            }
+          };
 
-    // JDprint error
-    this.socket.onerror = (event): void => {
-      console.log(`browser onerror event:${JSON.stringify(event)}`);
-      message.error({
-        content: this.openError,
-        key: this.openError,
-      });
-
-      for (const value of this.taskRequest.values()) {
-        if (value.reject) {
-          value.reject();
+          // 监听消息
+          this.socket.onmessage = this.onmessage;
+        } else {
+          console.log('打印机websocket ' + this.socketUrl + '已连接');
         }
-      }
-
-      this.taskRequest.clear();
-    };
+        if (this.socket?.readyState === 1) {
+          console.log('连接打印机ready, ' + this.socketUrl);
+          resolve();
+        } else {
+          console.log('等待连接打印机, ' + this.socketUrl);
+          setTimeout(() => {
+            initWebsocket();
+          }, 500);
+        }
+      };
+      initWebsocket();
+    });
   };
 
   private onmessage = (event: MessageEvent) => {
@@ -175,22 +186,8 @@ export class JdPrint implements PrintAbstract {
     }
   };
 
-  private isSocketConnected = () => {
-    return this.socket && this.socket.readyState === 1;
-  };
-
-  private refresh = () => {
-    if (this.isSocketConnected()) {
-      const taskQueue = this.taskQueue;
-      this.taskQueue = [];
-      taskQueue.forEach((item) => {
-        this.socket.send(JSON.stringify(item));
-      });
-    }
-  };
-
-  public sendToPrinter = (request: RequestProtocol): Promise<any> => {
-    this.connect();
+  public async sendToPrinter(request: RequestProtocol): Promise<any> {
+    await this.connectWebsocket();
 
     return new Promise((resolve, reject) => {
       this.taskRequest.set(request.key, {
@@ -199,13 +196,9 @@ export class JdPrint implements PrintAbstract {
         reject,
       });
 
-      if (this.isSocketConnected()) {
-        this.socket.send(JSON.stringify(request));
-      } else {
-        this.taskQueue.push(request);
-      }
+      this.socket.send(JSON.stringify(request));
     });
-  };
+  }
 
   // 打印机列表
   public getPrinters = (): Promise<string[]> => {

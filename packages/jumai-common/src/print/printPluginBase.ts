@@ -51,7 +51,7 @@ export class PrintPluginBase implements PrintAbstract {
       const initWebsocket = () => {
         if (!this.socket) {
           this.socket = new WebSocket(this.socketUrl);
-          console.log('建立websocket连接');
+          console.log('建立websocket连接, ' + this.socketUrl);
 
           // open
           this.socket.onopen = (event) => {
@@ -66,6 +66,13 @@ export class PrintPluginBase implements PrintAbstract {
               content: this.openError,
               key: this.openError,
             });
+            for (const value of this.taskRequest.values()) {
+              if (value.reject) {
+                value.reject();
+              }
+            }
+
+            this.taskRequest.clear();
           };
 
           // 关闭
@@ -79,10 +86,10 @@ export class PrintPluginBase implements PrintAbstract {
           // 监听消息
           this.socket.onmessage = this.onmessage;
         } else {
-          console.log('打印机websocket' + this.socketUrl + '已连接');
+          console.log('打印机websocket, ' + this.socketUrl + '已连接');
         }
         if (this.socket?.readyState === 1) {
-          console.log('连接打印机ready,printPluginBase');
+          console.log('连接打印机ready, ' + this.socketUrl);
           resolve();
         } else {
           console.log('等待连接打印机');

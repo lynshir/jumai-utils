@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import type { PrintAbstract, CommonPrintParams } from './types';
-import { isSocketConnected, handleSocketDisconnectNotification, validateData } from './utils';
+import {handleSocketDisconnectNotification, validateData } from './utils';
 
 type Fn = (...args: any[]) => any;
 
@@ -32,13 +32,10 @@ export class AiKuCunPrint implements PrintAbstract {
 
   private printTaskRequest = new Map<string, PrintMapItem>();
 
-  private printTaskQueue: Array<PrintMapItem['request']> = [];
-
   private isConnected = false;
 
-  private sendToPrinter(request: PrintMapItem['request']): Promise<any> {
-    this.doConnect();
-
+  private async sendToPrinter(request: PrintMapItem['request']): Promise<any> {
+    await this.connectWebsocket();
     return new Promise((resolve, reject) => {
       this.printTaskRequest.set(request.requestId, {
         request,
@@ -46,70 +43,65 @@ export class AiKuCunPrint implements PrintAbstract {
         reject,
       });
 
-      if (isSocketConnected(this.socket, this.openError)) {
-        this.socket.send(JSON.stringify(request));
-      } else {
-        this.printTaskQueue.push(request);
-      }
+      this.socket.send(JSON.stringify(request));
     });
   }
 
-  private doConnect = () => {
-    if (this.socket) {
-      return;
-    }
+  private connectWebsocket = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const initWebsocket = () => {
+        if (!this.socket) {
+          this.socket = new WebSocket(this.socketUrl);
+          console.log('建立websocket连接, ' + this.socketUrl);
 
-    this.socket = new WebSocket(this.socketUrl);
+          // open
+          this.socket.onopen = (event) => {
+            console.log(`browser onopen event:${JSON.stringify(event)}`);
+            this.isConnected = true;
+          };
 
-    // open
-    this.socket.onopen = (event) => {
-      console.log(`browser onopen event:${JSON.stringify(event)}`);
-      this.isConnected = true;
-      this.refresh();
-    };
+          // 错误
+          this.socket.onerror = (event): void => {
+            console.log(`browser onerror event:${JSON.stringify(event)}`);
+            message.error({
+              content: this.openError,
+              key: this.openError,
+            });
 
-    // 错误
-    this.socket.onerror = (event): void => {
-      console.log(`browser onerror event:${JSON.stringify(event)}`);
-      message.error({
-        content: this.openError,
-        key: this.openError,
-      });
+            for (const value of this.printTaskRequest.values()) {
+              if (value.reject) {
+                value.reject();
+              }
+            }
 
-      for (const value of this.printTaskRequest.values()) {
-        if (value.reject) {
-          value.reject();
+            this.printTaskRequest.clear();
+          };
+
+          // 关闭
+          this.socket.onclose = (event) => {
+            console.log(`browser onclose event:${JSON.stringify(event)}`);
+            if (this.isConnected) {
+              handleSocketDisconnectNotification();
+            }
+          };
+
+          // 监听消息
+          this.socket.onmessage = this.onmessage;
+        } else {
+          console.log('打印机websocket, ' + this.socketUrl + '已连接');
         }
-      }
-
-      this.printTaskRequest.clear();
-      this.printersTaskQueue = [];
-    };
-
-    // 关闭
-    this.socket.onclose = (event) => {
-      console.log(`browser onclose event:${JSON.stringify(event)}`);
-      if (this.isConnected) {
-        handleSocketDisconnectNotification();
-      }
-    };
-
-    // 监听消息
-    this.socket.onmessage = this.onmessage;
-  };
-
-  private refresh = () => {
-    if (isSocketConnected(this.socket, this.openError)) {
-      const taskQueue = this.printTaskQueue;
-      this.printTaskQueue = [];
-      taskQueue.forEach((item) => {
-        this.socket.send(JSON.stringify(item));
-      });
-
-      this.printersTaskQueue.forEach((item) => {
-        this.socket.send(JSON.stringify(item.request));
-      });
-    }
+        if (this.socket?.readyState === 1) {
+          console.log('连接打印机ready, ' + this.socketUrl);
+          resolve();
+        } else {
+          console.log('等待连接打印机');
+          setTimeout(() => {
+            initWebsocket();
+          }, 500);
+        }
+      };
+      initWebsocket();
+    });
   };
 
   private onmessage = (event: MessageEvent) => {
@@ -149,8 +141,6 @@ export class AiKuCunPrint implements PrintAbstract {
    * 获取打印机列表
    */
   public getPrinters = (): Promise<string[]> => {
-    this.doConnect();
-
     return new Promise((resolve, reject) => {
       const request = { esubrc: 'printerInfoQuery' } as const;
       this.printersTaskQueue.push({
@@ -158,10 +148,7 @@ export class AiKuCunPrint implements PrintAbstract {
         resolve,
         reject,
       });
-
-      if (isSocketConnected(this.socket, this.openError)) {
-        this.socket.send(JSON.stringify(request));
-      }
+      this.connectWebsocket().then(()=>this.socket.send(JSON.stringify(request)));
     });
   };
 
