@@ -49,8 +49,7 @@ export class ChannelsShopPrint implements PrintAbstract {
       const initWebsocket = () => {
         if (!this.socket) {
           this.socket = new WebSocket(this.socketUrl);
-          console.log('建立lwebsocket连接' + this.socketUrl);
-
+          console.log(`建立websocket连接,--${this.socketUrl}--,${new Date().toLocaleTimeString()}`);
           // open
           this.socket.onopen = (event) => {
             console.log(`browser onopen event:${JSON.stringify(event)}`);

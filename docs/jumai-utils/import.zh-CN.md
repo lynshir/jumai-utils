@@ -57,4 +57,4 @@ value: 指定当前是否选中
 
 #### `导入导出任务中心`
 
-代码在 egenie-ts-baseinfo，入口在 ERP 页面右上角(头像右击)菜单中
+代码在 jumai-ts-baseinfo，入口在 ERP 页面右上角(头像右击)菜单中

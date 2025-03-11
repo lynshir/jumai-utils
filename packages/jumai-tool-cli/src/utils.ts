@@ -11,13 +11,13 @@ export function findTarget(targets: string[], line) {
 
 export function getSelectList(projectName) {
   switch (projectName) {
-    case 'egenie-boss':
+    case 'jumai-boss':
       return BOSS_LIST.concat(...ENV_LIST);
-    case 'egenie-cloud-wms':
+    case 'jumai-cloud-wms':
       return CLOUD_LIST.concat(...ENV_LIST);
-    case 'egenie-ts-gallery':
+    case 'jumai-ts-gallery':
       return ERP_LIST.concat(...GALLERY_LIST);
-    case 'egenie-ts-vogue':
+    case 'jumai-ts-vogue':
       return ERP_LIST.concat(...SHJ_LIST, ...ENV_LIST);
     default:
       return ERP_LIST.concat(...ENV_LIST);

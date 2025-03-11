@@ -141,7 +141,7 @@ const ImageList: React.FC<{
             return (
               <div
                 className={cx(styles.imageWrapper, { [styles.active]: currentIndex === index })}
-                id={`egenie-preview-${index}`}
+                id={`jumai-preview-${index}`}
                 // eslint-disable-next-line react/no-array-index-key
                 key={`${url}-${index}`}
                 onClick={() => setIndex(index)}
@@ -272,7 +272,7 @@ export const ImagePreviewModal = (props: ImagePreviewModalProps) => {
 
   useEffect(() => {
     // 让图片滚动到可视区域
-    const dom = document.querySelector(`#egenie-preview-${index}`);
+    const dom = document.querySelector(`#jumai-preview-${index}`);
     dom?.scrollIntoView({ behavior: 'smooth' });
     resetTransform();
   }, [index]);

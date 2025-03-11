@@ -57,9 +57,9 @@ then
 chmod +x "${dir_name}"/node_modules/.bin/cross-env
 fi
 
-if test -e "${dir_name}"/node_modules/.bin/egenie-react-scripts
+if test -e "${dir_name}"/node_modules/.bin/jumai-react-scripts
 then
-chmod +x "${dir_name}"/node_modules/.bin/egenie-react-scripts
+chmod +x "${dir_name}"/node_modules/.bin/jumai-react-scripts
 fi
 
 if test -e "${dir_name}"/node_modules/.bin/jumai-bundler-cli
@@ -74,12 +74,12 @@ mv "${dist_dir}" "${upload_dir}"
 if [[ $cdn_type = $ali_cdn_type ]]
 then
   # 阿里上传处理
-  ${cdn_bin_path} cp -r -f "${upload_dir}" "oss://egenie-frontend/${oss_project}/${path_prefix}/${date_now}/"
+  ${cdn_bin_path} cp -r -f "${upload_dir}" "oss://jumai-frontend/${oss_project}/${path_prefix}/${date_now}/"
   echo "阿里上传处理"
 elif [[ $cdn_type = $hw_cdn_type ]]
 then
   # 华为上传处理
-  ${cdn_bin_path} cp -r -f -flat "${upload_dir}" "obs://egenie-frontend/${oss_project}/${path_prefix}/${date_now}/"
+  ${cdn_bin_path} cp -r -f -flat "${upload_dir}" "obs://jumai-frontend/${oss_project}/${path_prefix}/${date_now}/"
    echo "华为上传处理"
 fi
 echo "上传cdn成功"
