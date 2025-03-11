@@ -21,7 +21,7 @@ interface Response {
 }
 
 export class ChannelsShopPrint implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string) {
+  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly statusCallback: (isSuccess: boolean) => void) {
   }
 
   private socket: WebSocket;
@@ -105,6 +105,7 @@ export class ChannelsShopPrint implements PrintAbstract {
     const requestIDItem = this.taskRequest.get(response.requestID);
 
     if (response.command === 'getPrinterList' && requestIDItem) {
+      this.statusCallback(true);
       requestIDItem.resolve((response.printerList || []).map((item) => item.name));
       this.taskRequest.delete(response.requestID);
     } else if (response.command === 'print' && requestIDItem) {
@@ -114,6 +115,7 @@ export class ChannelsShopPrint implements PrintAbstract {
         requestIDItem.reject(errorItem.failureReason);
         message.error(errorItem.failureReason || '打印失败');
       } else {
+        this.statusCallback(true);
         requestIDItem.resolve();
       }
       this.taskRequest.delete(response.requestID);

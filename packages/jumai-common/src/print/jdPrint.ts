@@ -78,7 +78,7 @@ function downloadImage(imgSrc: string, name?: string): void {
 }
 
 export class JdPrint implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string) {
+  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly statusCallback: (isSuccess: boolean) => void) {
   }
 
   private socket: WebSocket;
@@ -164,6 +164,7 @@ export class JdPrint implements PrintAbstract {
       }
       this.taskRequest.delete(response?.key);
     } else if (success === 'true') {
+      this.statusCallback(true);
       // 2：批量推送打印，6：获取打印机列表，8：预览
       // 返回内容，获取打印机时，返回为 打印机逗号分隔字符串；获取预览时，返回为base64格式图片字符串
       if (code === '2') {

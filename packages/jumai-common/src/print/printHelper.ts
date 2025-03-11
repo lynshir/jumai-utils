@@ -21,23 +21,31 @@ declare global {
 class PrintHelper {
   private state: ENUM_PRINT_PLUGIN_TYPE = ENUM_PRINT_PLUGIN_TYPE.rookieCustomOld;
 
-  private readonly rookiePrintPlugin = new PrintPluginBase('ws://127.0.0.1:13528', openError('菜鸟'));
+  private printingStatus: boolean = false;
+  /**
+   * 切换到lodop---兼容原来
+   */
+  public readonly setPrintingStatus = (printFinished :boolean) => {
+    this.printingStatus = !printFinished;
+  };
 
-  private readonly xiaoHongShuPrintPlugin = new PrintPluginBase('ws://127.0.0.1:14528', openError('小红书'));
+  private readonly rookiePrintPlugin = new PrintPluginBase('ws://127.0.0.1:13528', openError('菜鸟'), this.setPrintingStatus);
 
-  private readonly pddPrintPlugin = new PrintPluginBase('ws://127.0.0.1:5000', openError('拼多多'));
+  private readonly xiaoHongShuPrintPlugin = new PrintPluginBase('ws://127.0.0.1:14528', openError('小红书'),this.setPrintingStatus);
 
-  private readonly dyPrintPlugin = new PrintPluginBase('ws://127.0.0.1:13888', openError('抖音'));
+  private readonly pddPrintPlugin = new PrintPluginBase('ws://127.0.0.1:5000', openError('拼多多'), this.setPrintingStatus);
 
-  private readonly ksPrintPlugin = new PrintPluginBase('ws://127.0.0.1:16888/ks/printer', openError('快手'));
+  private readonly dyPrintPlugin = new PrintPluginBase('ws://127.0.0.1:13888', openError('抖音'), this.setPrintingStatus);
 
-  private readonly dwPrintPlugin = new PrintPluginBase('ws://127.0.0.1:23825', openError('得物'));
+  private readonly ksPrintPlugin = new PrintPluginBase('ws://127.0.0.1:16888/ks/printer', openError('快手'), this.setPrintingStatus);
 
-  private readonly jdPrintPlugin = new JdPrint('ws://127.0.0.1:9113', openError('京东'));
+  private readonly dwPrintPlugin = new PrintPluginBase('ws://127.0.0.1:23825', openError('得物'), this.setPrintingStatus);
 
-  private readonly channelsShopPrintPlugin = new ChannelsShopPrint('ws://127.0.0.1:12705', openError('视频号'));
+  private readonly jdPrintPlugin = new JdPrint('ws://127.0.0.1:9113', openError('京东'), this.setPrintingStatus);
 
-  private readonly aiKuCunPrintPlugin = new AiKuCunPrint('ws://localhost:2750', openError('爱库存'));
+  private readonly channelsShopPrintPlugin = new ChannelsShopPrint('ws://127.0.0.1:12705', openError('视频号'), this.setPrintingStatus);
+
+  private readonly aiKuCunPrintPlugin = new AiKuCunPrint('ws://localhost:2750', openError('爱库存'), this.setPrintingStatus);
 
   public readonly lodopPrintPlugin = new LodopPrint();
 
@@ -94,11 +102,42 @@ class PrintHelper {
     return printers;
   };
 
+  // 记录当前重试次数
+  private retryCount = 0;
+
+  // 最多重试 3 次
+  private maxRetries = 50;
+
+  // 每次重试之间的间隔时间
+  private retryInterval = 100;
+
+  private waitForLimitPrint(): Promise<void> {
+    return new Promise((resolve) => {
+      const checkLimitPrint = () => {
+        if (!this.printingStatus || this.retryCount >= this.maxRetries) {
+          resolve();
+        } else {
+          setTimeout(() => {
+            this.retryCount++;
+            checkLimitPrint();
+          }, this.retryInterval);
+        }
+      };
+
+      checkLimitPrint();
+    });
+  }
+
   /**
    * 打印代理
    * 菜鸟旧版和lodop先切换打印类型,否则后果自负
    */
   public readonly print = async(params: CommonPrintParams | PddPrintParams | KsPrintParams): Promise<any> => {
+    await this.waitForLimitPrint();
+    // 正在打印
+    this.printingStatus = true;
+    this.retryCount = 0;
+
     validateData(params.contents);
     params = {
       ...params,

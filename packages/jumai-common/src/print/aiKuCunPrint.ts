@@ -25,7 +25,7 @@ interface Response {
 }
 
 export class AiKuCunPrint implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string) {
+  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly statusCallback: (isSuccess: boolean) => void) {
   }
 
   private socket: WebSocket;
@@ -112,12 +112,14 @@ export class AiKuCunPrint implements PrintAbstract {
 
     if (response.code === '00000') {
       if (isPrint && requestIdItem) {
+        this.statusCallback(true);
         requestIdItem.resolve();
         this.printTaskRequest.delete(requestId);
       } else {
         const printers: string[] = (response.printers || []).map((item) => item.printName);
         this.printersTaskQueue.forEach((item) => item.resolve(printers));
         this.printersTaskQueue = [];
+        this.statusCallback(true);
       }
     } else {
       const error = response.message || '打印失败';
@@ -128,6 +130,7 @@ export class AiKuCunPrint implements PrintAbstract {
       if (isPrint && requestIdItem) {
         requestIdItem.reject(error);
         this.printTaskRequest.delete(requestId);
+        this.statusCallback(true);
       } else {
         this.printersTaskQueue.forEach((item) => item.reject(error));
         this.printersTaskQueue = [];

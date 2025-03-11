@@ -25,7 +25,7 @@ interface Response {
 }
 
 export class PrintPluginBase implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string) {}
+  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly statusCallback: (isSuccess: boolean) => void) {}
 
   private socket: WebSocket;
 
@@ -109,6 +109,7 @@ export class PrintPluginBase implements PrintAbstract {
     if (response.cmd === 'getPrinters' && requestIDItem) {
       requestIDItem.resolve((response.printers || []).map((item) => item.name));
       this.taskRequest.delete(response.requestID);
+      this.statusCallback(true);
     } else if (response.cmd === 'print') {
       if (response.status === 'success') {
         const previewUrls: string[] = [].concat(response.previewURL || response?.previewImage).filter(Boolean);
@@ -119,6 +120,7 @@ export class PrintPluginBase implements PrintAbstract {
         if (requestIDItem) {
           requestIDItem.resolve(previewUrls);
         }
+        this.statusCallback(true);
       } else {
         const msg = response?.msg ?? '请求失败';
         message.error(msg);
