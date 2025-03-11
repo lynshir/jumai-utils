@@ -30,7 +30,6 @@ interface PrintData {
  * 重要参数preview、userDataIds、tempType、printSrc
  */
 interface PrintWayBillParams {
-
   /**
    * 模版类型
    * '0': '快递单',
@@ -139,7 +138,7 @@ class PrintWayBill {
   /**
    * 前置打印
    */
-  public readonly frontPrint = async(params: PrintWayBillParams): Promise<void> => {
+  public readonly frontPrint = async (params: PrintWayBillParams): Promise<void> => {
     await new Promise((resolve, reject) => {
       Modal.confirm({
         content: params.preview ? '确定预览' : '确定打印',
@@ -158,7 +157,7 @@ class PrintWayBill {
   /**
    * 自定义打印
    */
-  public readonly customPrint = async(params: PrintWayBillParams): Promise<void> => {
+  public readonly customPrint = async (params: PrintWayBillParams): Promise<void> => {
     const customParams = await getCustomPrintParam('0');
 
     await this.getDataAndPrint({
@@ -170,7 +169,7 @@ class PrintWayBill {
   /**
    * 获取数据并且打印
    */
-  public readonly getDataAndPrint = async(params: PrintWayBillParams): Promise<void> => {
+  public readonly getDataAndPrint = async (params: PrintWayBillParams): Promise<void> => {
     const newParams = {
       checkPrint: false,
       clearCell: false,
@@ -179,7 +178,7 @@ class PrintWayBill {
       ...params,
     };
 
-    const printData = await request<{ data: PrintData[]; }>({
+    const printData = await request<{ data: PrintData[] }>({
       url: '/api/print/wms/waybill/queryWaybillPrintData',
       data: newParams,
       method: 'post',
@@ -192,7 +191,7 @@ class PrintWayBill {
   /**
    * 有数据,直接打印
    */
-  public readonly executePrint = async(params: PrintWayBillParams, printData: PrintData[]): Promise<void> => {
+  public readonly executePrint = async (params: PrintWayBillParams, printData: PrintData[]): Promise<void> => {
     validateData(printData);
 
     for (let i = 0; i < printData.length; i++) {
@@ -292,7 +291,7 @@ class PrintWayBill {
             });
             break;
 
-            // 有赞直接用菜鸟
+          // 有赞直接用菜鸟
           case ENUM_WAY_BILL_TYPE.youZan:
             await printHelper.print({
               ...commonPrintData,
@@ -313,7 +312,7 @@ class PrintWayBill {
     }
   };
 
-  private handleNotify = async(waybillData: PrintData['waybillData']): Promise<boolean> => {
+  private handleNotify = async (waybillData: PrintData['waybillData']): Promise<boolean> => {
     const notHaveCourierNo = waybillData.notHaveCourierNo;
     const havePrintList = waybillData.havePrintList;
     let step1 = true;
@@ -344,12 +343,7 @@ class PrintWayBill {
     return step1 && step2;
   };
 
-  private updateStatus = (data: {
-    callbackIds: string | number;
-    checkSku: boolean;
-    printSrc: string | number;
-    docIds: string;
-  }): Promise<any> => {
+  private updateStatus = (data: { callbackIds: string | number; checkSku: boolean; printSrc: string | number; docIds: string }): Promise<any> => {
     return request({
       url: '/api/print/wms/waybill/updateWaybillPrintCallback',
       method: 'post',
@@ -379,7 +373,7 @@ export async function handleWayBillRemotePrintUrl(userData: UserDataItem[]): Pro
     return [];
   }
 
-  const filterNeedFetchData: Array<{ index: number; data: UserDataItem; }> = [];
+  const filterNeedFetchData: Array<{ index: number; data: UserDataItem }> = [];
   userData.forEach((item, index) => {
     // url兼容字符串和数组
     if ((typeof item.remotePrintUrls === 'string' && item.remotePrintUrls.length) || (Array.isArray(item.remotePrintUrls) && item.remotePrintUrls.length)) {
@@ -392,26 +386,27 @@ export async function handleWayBillRemotePrintUrl(userData: UserDataItem[]): Pro
 
   // 此处远端的地址需要支持http2,且一次并发请求不能太多,太多浏览器会直接报错
   const pageFilterNeedFetchData = sliceData(filterNeedFetchData, 500);
-
+  console.log(`${new Date().toLocaleTimeString()},开始获取固定模板数据`);
   for (let i = 0; i < pageFilterNeedFetchData.length; i++) {
-    const promises: Array<Promise<{ index: number; printData: string; }>> = pageFilterNeedFetchData[i].map((item) => fetchRemoteData(item.data)
-      .then((printData) => ({
-        index: item.index,
-        printData,
-      }))
-      .catch((info) => {
-        const error = '获取固定模板数据失败';
-        console.error(info);
-        message.error({
-          key: error,
-          content: error,
-        });
-        return Promise.reject(info);
-      })
+    const promises: Array<Promise<{ index: number; printData: string }>> = pageFilterNeedFetchData[i].map((item) =>
+      fetchRemoteData(item.data)
+        .then((printData) => ({
+          index: item.index,
+          printData,
+        }))
+        .catch((info) => {
+          const error = '获取固定模板数据失败';
+          console.error(info);
+          message.error({
+            key: error,
+            content: error,
+          });
+          return Promise.reject(info);
+        }),
     );
 
     const data = await Promise.all(promises);
-    console.log('获取固定模板数据成功');
+    console.log(`${new Date().toLocaleTimeString()},获取固定模板数据成功`);
 
     data.forEach((item) => {
       userData[item.index]._remotePrintData = item.printData;

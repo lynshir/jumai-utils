@@ -19,19 +19,18 @@ interface Response {
   // 得物预览
   previewUrl?: string;
   msg?: string;
-  printers?: Array<{ name?: string; }>;
-  printStatus?: Array<{ msg?: string; }>;
+  printers?: Array<{ name?: string }>;
+  printStatus?: Array<{ msg?: string }>;
   previewImage?: string[];
 }
 
 export class PrintPluginBase implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string) {
-  }
+  constructor(private readonly socketUrl: string, private readonly openError: string) {}
 
   private socket: WebSocket;
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  private taskRequest = new Map<string, { request: RequestProtocol; resolve?: Function; reject?: Function; }>();
+  private taskRequest = new Map<string, { request: RequestProtocol; resolve?: Function; reject?: Function }>();
 
   private isConnected = false;
 
@@ -49,7 +48,7 @@ export class PrintPluginBase implements PrintAbstract {
 
   public connectWebsocket = (): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const initWebsocket = () =>{
+      const initWebsocket = () => {
         if (!this.socket) {
           this.socket = new WebSocket(this.socketUrl);
           console.log('建立websocket连接');
@@ -79,24 +78,22 @@ export class PrintPluginBase implements PrintAbstract {
 
           // 监听消息
           this.socket.onmessage = this.onmessage;
-
         } else {
           console.log('打印机websocket' + this.socketUrl + '已连接');
         }
-        if(this.socket?.readyState === 1) {
-          console.log('连接打印机ready')
+        if (this.socket?.readyState === 1) {
+          console.log('连接打印机ready,printPluginBase');
           resolve();
-        }
-        else{
-          console.log('等待连接打印机')
+        } else {
+          console.log('等待连接打印机');
           setTimeout(() => {
             initWebsocket();
           }, 500);
         }
-      }
+      };
       initWebsocket();
-    })
-  }
+    });
+  };
 
   private onmessage = (event: MessageEvent) => {
     const response: Response = JSON.parse(event.data);
@@ -160,16 +157,15 @@ export class PrintPluginBase implements PrintAbstract {
   /**
    * 打印
    */
-  public print = async({
+  public print = async ({
     preview,
     contents,
     printer,
     previewType = 'pdf',
     cmd,
-
-    // 得物预览和其它有所区别
-    // eslint-disable-next-line require-await
-  }: CommonPrintParams & { cmd?: 'preview'; }): Promise<any> => {
+  }: // 得物预览和其它有所区别
+  // eslint-disable-next-line require-await
+  CommonPrintParams & { cmd?: 'preview' }): Promise<any> => {
     validateData(contents);
     return this.sendToPrinter({
       cmd: cmd || 'print',

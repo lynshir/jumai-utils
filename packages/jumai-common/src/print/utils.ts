@@ -49,10 +49,7 @@ export function getUUID(len?: number, radix?: number): string {
 
 export function getTemplateData(tempData: TemplateData): Omit<TemplateData, 'content'> {
   if (tempData?.content && tempData.content && Object.keys(tempData.content).length > 0) {
-    const {
-      content,
-      ...rest
-    } = tempData;
+    const { content, ...rest } = tempData;
 
     const newContent = {};
     for (const contentKey in content) {
@@ -109,10 +106,7 @@ export function get(data: any, path: string[]): any {
 // skuList-vendor_id-hz4692ym6 取前2个
 export function lodopItemGetText(data: any, id: string): any {
   const path: string[] = [];
-  const [
-    key1,
-    key2,
-  ] = id.split('-');
+  const [key1, key2] = id.split('-');
 
   const key1Path: string[] = typeof key1 === 'string' ? key1.split('.') : [];
   for (let i = 0; i < key1Path.length; i++) {
@@ -145,8 +139,7 @@ export function formatBarcodeData(row: number, col: number, data: any[]): any[] 
   if (height >= 1 && width >= 1 && (height > 1 || width > 1)) {
     const pageSize = width * height;
     const totalPage = Math.ceil(data.length / pageSize);
-    const result = Array(totalPage)
-      .fill(null);
+    const result = Array(totalPage).fill(null);
 
     data.forEach((item, index) => {
       const currentPage = (index / pageSize) >>> 0;
@@ -447,7 +440,9 @@ export function formatPddData(printData: any[], type: ENUM_PRINT_PLUGIN_TYPE.pdd
     if (type === ENUM_PRINT_PLUGIN_TYPE.pddCloud && item.pinduoduo) {
       contents.push({
         data: JSON.parse(item.pinduoduo),
-        templateURL: courierPrintType ? process.env.REACT_APP_PDD_TEMPLATE_URL_1 || getStaticResourceUrl('customer-source/printTemp/pdd_waybill_yilian_template.xml') : process.env.REACT_APP_PDD_TEMPLATE_URL_0 || getStaticResourceUrl('customer-source/printTemp/pdd_waybill_seller_area_template.xml'),
+        templateURL: courierPrintType
+          ? process.env.REACT_APP_PDD_TEMPLATE_URL_1 || getStaticResourceUrl('customer-source/printTemp/pdd_waybill_yilian_template.xml')
+          : process.env.REACT_APP_PDD_TEMPLATE_URL_0 || getStaticResourceUrl('customer-source/printTemp/pdd_waybill_seller_area_template.xml'),
       });
     } else if (type === ENUM_PRINT_PLUGIN_TYPE.pddErp && getCustomTemplateUrlNew(item)) {
       contents.push({
@@ -501,13 +496,15 @@ export function formatChannelsShopData(printData: any[]): any[] {
   return documents;
 }
 
-export function formatJdData(printData: any[], type: ENUM_PRINT_PLUGIN_TYPE.jdCloud | ENUM_PRINT_PLUGIN_TYPE.jdErp, preview: BasePrintParams['preview'], printer: BasePrintParams['printer']): any[] {
+export function formatJdData(
+  printData: any[],
+  type: ENUM_PRINT_PLUGIN_TYPE.jdCloud | ENUM_PRINT_PLUGIN_TYPE.jdErp,
+  preview: BasePrintParams['preview'],
+  printer: BasePrintParams['printer'],
+): any[] {
   const documents: any[] = [];
   printData.forEach((item) => {
-    const {
-      jdqlData,
-      _remotePrintData,
-    } = item;
+    const { jdqlData, _remotePrintData } = item;
     if (jdqlData) {
       documents.push({
         preview,
@@ -606,10 +603,10 @@ export function loadScripts(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const element = document.createElement('script');
     element.src = src;
-    element.onload = function() {
+    element.onload = function () {
       resolve();
     };
-    element.onerror = function(e) {
+    element.onerror = function (e) {
       reject(e);
     };
     document.head.appendChild(element);
@@ -620,10 +617,10 @@ function readBlobAsText(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsText(blob, 'utf-8');
-    fileReader.onload = ((event) => {
+    fileReader.onload = (event) => {
       resolve(event.target.result as string);
-    });
-    fileReader.onerror = function() {
+    };
+    fileReader.onerror = function () {
       reject();
     };
   });
@@ -631,6 +628,7 @@ function readBlobAsText(blob: Blob): Promise<string> {
 
 export async function readRemoteFile(url: string): Promise<string> {
   // 不用组件库的request(有版本号请求头,不是简单请求,涉及跨域处理,麻烦)
+  console.log('打印模板获取开始url', url);
   const info = await axios.request<Blob>({
     url,
     withCredentials: false,
@@ -646,9 +644,9 @@ export async function readRemoteFile(url: string): Promise<string> {
   return readBlobAsText(info.data);
 }
 
-export const handleSocketDisconnectNotification = (function() {
+export const handleSocketDisconnectNotification = (function () {
   let isFirst = false;
-  return function() {
+  return function () {
     const error = '打印连接已经断开,要进行打印业务请检查打印机、网络等。然后刷新页面';
     message.error({
       key: error,
