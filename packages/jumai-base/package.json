@@ -1,6 +1,6 @@
 {
   "name": "jumai-base",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/cjs/index.js",
