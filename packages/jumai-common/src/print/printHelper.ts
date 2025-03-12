@@ -240,6 +240,8 @@ class PrintHelper {
             templateData: params.templateData,
           });
         }
+        // lodop打印条码不阻塞
+        this.printingStatus = true;
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.dw: {
