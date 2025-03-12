@@ -241,7 +241,7 @@ class PrintHelper {
           });
         }
         // lodop打印条码不阻塞
-        this.printingStatus = true;
+        this.printingStatus = false;
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.dw: {
