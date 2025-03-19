@@ -106,7 +106,7 @@ class PrintHelper {
   private retryCount = 0;
 
   // 最多重试 3 次
-  private maxRetries = 50;
+  private maxRetries = 80;
 
   // 每次重试之间的间隔时间
   private retryInterval = 100;
