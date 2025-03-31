@@ -257,28 +257,28 @@ export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_
     }
 
     // 自定义数据
-    if (type === ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuCloud) {
-      if (item.pinduoduo) {
-        documents.push({
-          data: JSON.parse(item.pinduoduo),
-          templateURL: getCustomTemplateUrlNew(item),
-        });
-      }
-    } else if (type === ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp) {
-      if (getCustomTemplateUrlNew(item)) {
-        documents.push({
-          data: getCustomDataNew(item),
-          templateURL: getCustomTemplateUrlNew(item),
-        });
-      }
-    }
+    // if (type === ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuCloud) {
+    //   if (item.pinduoduo) {
+    //     documents.push({
+    //       data: JSON.parse(item.pinduoduo),
+    //       templateURL: getCustomTemplateUrlNew(item),
+    //     });
+    //   }
+    // } else if (type === ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp) {
+    //   if (getCustomTemplateUrlNew(item)) {
+    //     documents.push({
+    //       data: getCustomDataNew(item),
+    //       templateURL: getCustomTemplateUrlNew(item),
+    //     });
+    //   }
+    // }
 
-    if (getCustomPageData(item)) {
-      documents.push({
-        data: getCustomPageData(item).data,
-        templateURL: getCustomPageData(item).templateUrl,
-      });
-    }
+    // if (getCustomPageData(item)) {
+    //   documents.push({
+    //     data: getCustomPageData(item).data,
+    //     templateURL: getCustomPageData(item).templateUrl,
+    //   });
+    // }
   });
 
   if (documents.length) {

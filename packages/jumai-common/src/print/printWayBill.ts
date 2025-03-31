@@ -406,7 +406,7 @@ export async function handleWayBillRemotePrintUrl(userData: UserDataItem[]): Pro
     );
 
     const data = await Promise.all(promises);
-    console.log(`${new Date().toLocaleTimeString()},获取固定模板数据成功`);
+    console.log(`${new Date().toLocaleTimeString()},获取固定模板数据成功,数据为--,${data}`);
 
     data.forEach((item) => {
       userData[item.index]._remotePrintData = item.printData;

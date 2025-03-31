@@ -31,7 +31,7 @@ class PrintHelper {
 
   private readonly rookiePrintPlugin = new PrintPluginBase('ws://127.0.0.1:13528', openError('菜鸟'), this.setPrintingStatus);
 
-  private readonly xiaoHongShuPrintPlugin = new PrintPluginBase('ws://127.0.0.1:14528', openError('小红书'),this.setPrintingStatus);
+  private readonly xiaoHongShuPrintPlugin = new PrintPluginBase('ws://127.0.0.1:10818', openError('小红书'),this.setPrintingStatus);
 
   private readonly pddPrintPlugin = new PrintPluginBase('ws://127.0.0.1:5000', openError('拼多多'), this.setPrintingStatus);
 
