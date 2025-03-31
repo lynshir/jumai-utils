@@ -268,7 +268,7 @@ export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_
       if (getCustomTemplateUrlNew(item)) {
         documents.push({
           data: getCustomDataNew(item),
-          templateURL: 'https://cloudprint.xiaohongshu.com/template/standard/11293/1',
+          templateURL: 'https://cloudprint.xiaohongshu.com/template/standard/11293/2',
         });
       }
     }
@@ -276,7 +276,7 @@ export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_
     if (getCustomPageData(item)) {
       documents.push({
         data: getCustomPageData(item).data,
-        templateURL: 'https://cloudprint.xiaohongshu.com/template/standard/11293/1',
+        templateURL: 'https://cloudprint.xiaohongshu.com/template/standard/11293/2',
       });
     }
   });
