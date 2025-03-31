@@ -261,6 +261,7 @@ class PrintHelper {
       case ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp:
       case ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuCloud: {
         const pageData = sliceData(params.contents, params.count);
+        console.log(pageData, '小红书打印数据');
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatXiaoHongShuData(pageData[i], params.state);
           await this.xiaoHongShuPrintPlugin.print({
