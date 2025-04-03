@@ -246,9 +246,9 @@ export function formatRookieCustomData(printData: any[], printTemplate?: Templat
 }
 
 export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp | ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuCloud): any[] {
-  const documents: any[] = [];
   const contents = [];
   (printData || []).forEach((item) => {
+   const documents: any[] = [];
     // 固定数据
     if (item._remotePrintData) {
       documents.push(JSON.parse(item._remotePrintData));
@@ -284,7 +284,7 @@ export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_
         contents: documents,
     });
   });
-
+  console.log(contents, type, '小红书组装后的数据');
   if (contents.length) {
     return contents;
   } else {
