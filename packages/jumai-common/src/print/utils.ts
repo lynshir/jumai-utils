@@ -247,7 +247,7 @@ export function formatRookieCustomData(printData: any[], printTemplate?: Templat
 
 export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp | ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuCloud): any[] {
   const documents: any[] = [];
-
+  const contents = [];
   (printData || []).forEach((item) => {
     // 固定数据
     if (item._remotePrintData) {
@@ -279,15 +279,14 @@ export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_
         templateURL: 'https://cloudprint.xiaohongshu.com/template/standard/11293/2',
       });
     }
+    contents.push({
+      documentID: getUUID(),
+        contents: documents,
+    });
   });
 
-  if (documents.length) {
-    return [
-      {
-        documentID: getUUID(),
-        contents: documents,
-      },
-    ];
+  if (contents.length) {
+    return contents;
   } else {
     return [];
   }
