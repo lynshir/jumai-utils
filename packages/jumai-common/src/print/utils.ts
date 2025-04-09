@@ -248,7 +248,7 @@ export function formatRookieCustomData(printData: any[], printTemplate?: Templat
 export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp | ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuCloud): any[] {
   const contents = [];
   (printData || []).forEach((item) => {
-   const documents: any[] = [];
+    const documents: any[] = [];
     // 固定数据
     if (item._remotePrintData) {
       documents.push(JSON.parse(item._remotePrintData));
@@ -272,7 +272,7 @@ export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_
         });
       }
     }
-
+    // 如果后端有分页数据，需要拼接数据
     if (getCustomPageData(item)) {
       documents.push({
         data: getCustomPageData(item).data,
@@ -281,7 +281,7 @@ export function formatXiaoHongShuData(printData: any[], type: ENUM_PRINT_PLUGIN_
     }
     contents.push({
       documentID: getUUID(),
-        contents: documents,
+      contents: documents,
     });
   });
   console.log(contents, type, '小红书组装后的数据');
