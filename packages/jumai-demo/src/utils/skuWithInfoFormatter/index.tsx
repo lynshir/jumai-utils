@@ -91,7 +91,7 @@ export const SkuWithInfoFormatter = function({ productDisplay, info, saleOrderTa
           <img
             alt=""
             className={styles.displayImg}
-            src={info.pic || noPic}
+            // src={info.pic || noPic}
           />
         )
       }

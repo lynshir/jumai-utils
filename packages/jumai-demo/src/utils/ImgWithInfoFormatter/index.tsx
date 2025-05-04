@@ -128,7 +128,7 @@ export const ImgWithInfoFormatter: React.FC<IImgProps> = function({ pic, product
         className={styles.imgStyle}
         onMouseLeave={hidePic}
         onMouseOver={(e) => showPic(e.target, pic, colorType, sizeType, productNo)}
-        src={pic || noPic}
+        // src={pic || noPic}
         style={{
           width: '30px',
           height: '30px',

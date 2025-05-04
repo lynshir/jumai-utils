@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import type { FormInstance } from 'antd';
-import { excelImport, templateDownload, excelExport } from 'jumai-import-export';
+// import { excelImport, templateDownload, excelExport } from 'jumai-import-export';
 import type { BaseData } from 'jumai-utils';
 import { request } from 'jumai-utils';
 import { observable, action } from 'mobx';
@@ -40,9 +40,9 @@ export default class ImportAddStore {
 
   @action public handleDownload = (): void => {
     if (this.importType === 'addOrder') {
-      templateDownload.download('sale_order_detail_import', '订单信息');
+      // templateDownload.download('sale_order_detail_import', '订单信息');
     } else {
-      templateDownload.download('add_sale_order_detail_import', '订单添加明细');
+      // templateDownload.download('add_sale_order_detail_import', '订单添加明细');
     }
   };
 
@@ -106,7 +106,7 @@ export default class ImportAddStore {
       const failedData = list?.filter((item) => item.failed_reason);
       if (failedData.length) {
         const exportProperties = { directExport: true };
-        excelExport.exportData('failed_add_sale_order_detail_import', '订单导入商品错误信息', failedData, exportProperties);
+        // excelExport.exportData('failed_add_sale_order_detail_import', '订单导入商品错误信息', failedData, exportProperties);
       } else {
         message.success('导入完成');
         this.closeImportModal();
@@ -137,10 +137,10 @@ export default class ImportAddStore {
         importOverRollback: this.importProductCallBack,
       };
 
-      excelImport.importXlsx('add_sale_order_detail_import', {
-        files: [originFile],
-        value: originFile.name,
-      }, params);
+      // excelImport.importXlsx('add_sale_order_detail_import', {
+      //   files: [originFile],
+      //   value: originFile.name,
+      // }, params);
 
       // excelImport.importXlsx('sale_order_detail_import', file, params);
     }
@@ -203,10 +203,10 @@ export default class ImportAddStore {
         importUrl: '/api/oms/rest/excelImport/omsExcelImport',
       };
 
-      excelImport.importXlsx('sale_order_detail_import', {
-        files: [originFile],
-        value: originFile.name,
-      }, params);
+      // excelImport.importXlsx('sale_order_detail_import', {
+      //   files: [originFile],
+      //   value: originFile.name,
+      // }, params);
 
       // excelImport.importXlsx('sale_order_detail_import', file, params);
     }

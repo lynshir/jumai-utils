@@ -36,34 +36,48 @@
   :global {
     .ant-btn-group-sm > .ant-btn:first-child:not(:last-child),
     .ant-btn-group-sm > span:first-child:not(:last-child) > .ant-btn {
-      border: 1px solid #c5c3cb;
+      // border: 1px solid #c5c3cb;
+      border: none;
     }
 
     .ant-btn-group-sm > .ant-btn:last-child:not(:first-child),
     .ant-btn-group-sm > span:last-child:not(:first-child) > .ant-btn {
-      border: 1px solid #c5c3cb;
-      border-left-color: #e2e2e5;
+      // border: 1px solid #c5c3cb;
+      // border-left-color: #e2e2e5;
+      border: none;
     }
   }
 
   .dropdownBtn {
-    height: 30px;
+    height: 26px;
     margin-right: 10px;
     padding: 5px 8px;
-    border: 1px solid #c5c3cb;
+    // border: 1px solid #c5c3cb;
+    border: none;
+    color: #326bf1;
+    :hover {
+      background-color: #549df6;
+      color: #fff;
+    }
   }
 
   .headerButtonDropDown {
     width: auto !important;
+    color: #326bf1;
     margin-bottom: 5px;
-
     button {
-      height: 30px !important;
+      height: 26px !important;
+      color: #326bf1;
+    }
+    :hover {
+      background-color: #3691ff;
+      color: #fff;
     }
 
     :global {
       .ant-btn {
-        border-color: #c5c3cb;
+        // border-color: #c5c3cb;
+        border: none;
       }
     }
   }
@@ -71,13 +85,19 @@
   .headerButton {
     display: flex;
     align-items: center;
-    height: 30px;
+    height: 26px;
     margin-right: 4px;
     margin-bottom: 4px;
     padding: 0 8px;
     font-weight: 400;
     font-size: 12px;
-    border: 1px solid #c5c3cb;
+    // border: 1px solid #c5c3cb;
+    border: none;
+    color: #326bf1;
+    :hover {
+      background-color: #3691ff !important;
+      color: #fff;
+    }
   }
 
   .btnExtraleftWrap {
@@ -287,7 +307,7 @@
         box-shadow: none !important;
       }
 
-      .rdg-cell[aria-selected="true"] {
+      .rdg-cell[aria-selected='true'] {
         box-shadow: none !important;
       }
 
@@ -314,7 +334,7 @@
           border-right: none;
           transform: rotate(-45deg);
           opacity: 1;
-          content: "";
+          content: '';
         }
       }
 
@@ -518,7 +538,7 @@
   height: 100%;
   margin-left: 4px;
 
-  >div {
+  > div {
     height: 100%;
     margin-top: unset !important;
   }
