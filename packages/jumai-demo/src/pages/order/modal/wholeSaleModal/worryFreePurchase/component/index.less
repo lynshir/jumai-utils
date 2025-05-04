@@ -1,0 +1,73 @@
+@frontPrimaryColor: #fb071f;
+
+.showPrice {
+  color: @frontPrimaryColor;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+
+  .priceIcon {
+    font-size: 14px;
+  }
+
+  .intPart {
+    font-size: @egenie-font-size-lg;
+  }
+}
+
+.customNumWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .customOperat {
+    position: relative;
+    padding: 6px 13px;
+    color: #333;
+    border: 1px solid #e2e2e5;
+    cursor: pointer;
+
+    &:hover {
+      color: @egenie-white;
+      background: @egenie-primary-color;
+    }
+  }
+
+  .minusBtn {
+    border-right: none;
+    border-radius: 2px 0 0 2px;
+  }
+
+  .addBtn {
+    border-left: none;
+    border-radius: 0 2px 2px 0;
+  }
+
+  :global {
+    .ant-input-number-input {
+      text-align: center !important;
+    }
+
+    .ant-input-number-handler-wrap {
+      display: none;
+    }
+
+    .ant-btn-sm {
+      padding: 1.6px 12px !important;
+      border-radius: unset;
+    }
+
+    .ant-input-number {
+      border: unset;
+      border-top: 1px solid #e2e2e5;
+      border-bottom: 1px solid #e2e2e5;
+    }
+  }
+}
+
+.front {
+  .ant-btn:hover,
+  .ant-btn:focus {
+    color: @frontPrimaryColor;
+    border-color: @frontPrimaryColor;
+  }
+}

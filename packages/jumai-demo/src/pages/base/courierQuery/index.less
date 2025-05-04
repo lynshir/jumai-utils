@@ -1,0 +1,115 @@
+.courierQueryModal {
+  display: flex;
+  align-items: center;
+
+  .input {
+    flex: 2;
+    margin-right: 6px;
+  }
+
+  margin-bottom: 12px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.courierContent {
+  height: 100%;
+
+  :global {
+    .ant-tabs-content,
+    .ant-tabs-tabpane {
+      height: 100% !important;
+    }
+  }
+}
+
+.platformQuery {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .basicLogisticsInformation {
+    >div {
+      margin-bottom: 10px;
+      color: #2b2e3e;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 17px;
+    }
+  }
+
+  .trajectory {
+    flex: 2;
+    padding: 16px;
+    overflow-y: auto;
+    background-color: #f6f7f8;
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      color: #333;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 17px;
+    }
+
+    .trace {
+      display: inline-block;
+      margin-top: 3px;
+    }
+
+    :global {
+      .ant-timeline-item-label {
+        width: 73px;
+      }
+
+      .ant-timeline-item-tail,
+      .ant-timeline-item-head {
+        left: 14%;
+      }
+
+      .ant-timeline-item-content {
+        left: calc(13% - 4px) !important;
+        width: calc(79% - 14px) !important;
+      }
+    }
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 232px;
+  background: #f6f7f8;
+
+  >img {
+    height: 80px;
+  }
+
+  >span {
+    margin-top: 8px;
+    margin-left: 12px;
+    color: #2b2e3e;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+  }
+}
+
+.status {
+  display: inline-block;
+  width: 44px;
+  height: 22px;
+  margin-left: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 2px;
+}

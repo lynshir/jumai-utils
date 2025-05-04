@@ -1,0 +1,41 @@
+.icon {
+  margin-left: @egenie-spacing-xss;
+  color: @egenie-primary-color;
+}
+
+.productSettingPopover {
+  :global {
+    .ant-popover-inner-content {
+      width: 200px;
+      padding: 0;
+    }
+    // 复选框
+    .ant-checkbox-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ant-checkbox-group-item:last-child {
+      margin: @egenie-spacing-md 0 @egenie-spacing-lg;
+    }
+  }
+  // popover内部
+  .container {
+    padding: @egenie-spacing-lg @egenie-spacing-md;
+    box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.2);
+  }
+  // popover按钮盒子
+  .settingBtns {
+    text-align: right;
+  }
+  // popover按钮
+  button {
+    margin-left: @egenie-spacing-xs;
+  }
+  // 提交anniu
+  .submitBtn {
+    color: @egenie-primary-color;
+    background: rgba(25, 120, 255, 0.1);
+    border: 1px solid @egenie-primary-color;
+  }
+}

@@ -1,0 +1,152 @@
+.detailInfo {
+  display: flex;
+  //align-items: flex-start;
+  margin-top: 4px;
+
+  .detailDescription {
+    flex: 2;
+    margin-left: 8px;
+    overflow: hidden;
+
+    .otherLine {
+      margin-top: 4px;
+      //line-height: 20px;
+    }
+  }
+}
+
+.normalGrid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 120px;
+  line-height: 20px;
+}
+
+.stockWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 120px;
+  line-height: normal;
+}
+
+.statePoint {
+  width: 6px;
+  height: 6px;
+  margin-right: 2px;
+  border-radius: 3px;
+}
+
+.uniqueCode {
+  display: inline-block;
+  width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  line-height: 16px;
+
+  .title {
+    flex: 2;
+    overflow: hidden; //超出的文本隐藏
+    white-space: nowrap;  // 默认不换行；
+    text-overflow: ellipsis; //溢出用省略号显示
+  }
+}
+
+.refundStatus {
+  padding: 2px 4px;
+  color: #f2270a;
+  background: rgba(242, 39, 10, 0.1);
+  border-radius: 2px;
+}
+
+.payStatu {
+  padding: 2px 4px;
+  color: #02c190;
+  background: rgba(2, 193, 144, 0.1);
+  border-radius: 2px;
+}
+
+.freeSend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  padding: 2px;
+  color: #fff;
+  font-weight: 500;
+  background-color: #f2270a;
+  border-radius: 2px;
+}
+
+.tags {
+  height: 20px;
+  margin: 0 4px 4px 0;
+  padding: 2px 4px;
+  color: rgb(242, 39, 10);
+  background: rgba(242, 39, 10, 0.1);
+  border-radius: 2px;
+}
+
+.skuTags {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 20px;
+}
+
+.normalGridSkuNo {
+  margin-top: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.basicInformation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+
+  .otherLine {
+    width: 48%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.colorOrSize {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+
+  .select {
+    flex: 2;
+  }
+}
+
+.terminate {
+  display: flex;
+  align-items: center;
+
+  .terminateInputNumber {
+    flex: 2;
+  }
+}
+
+.paymentOrInputNumber {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 120px;
+  line-height: 20px;
+}

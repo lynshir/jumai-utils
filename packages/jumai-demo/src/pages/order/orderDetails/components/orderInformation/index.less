@@ -1,0 +1,40 @@
+.orderState {
+  width: 52px;
+  margin-right: @egenie-spacing-xs;
+  color: #fff;
+  font-size: @egenie-font-size-sm;
+  line-height: @egenie-line-height-sm;
+  text-align: center;
+  border-radius: @egenie-border-radius-base;
+}
+
+.state {
+  display: flex;
+  align-items: center;
+}
+
+.redColor {
+  background-color: @egenie-highlight-color;
+}
+
+.grayColor {
+  background-color: @egenie-text-color-secondary;
+}
+
+.time {
+  color: @egenie-heading-color;
+  font-size: @egenie-font-size-sm;
+  line-height: @egenie-line-height-sm;
+}
+
+.orderWrapper {
+  :global {
+    .ant-col.ant-col-2.ant-form-item-label {
+      flex: 0 0 5.2%;
+    }
+
+    .ant-col.ant-col-22.ant-form-item-control {
+      max-width: 94.8%;
+    }
+  }
+}

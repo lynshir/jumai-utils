@@ -1,0 +1,113 @@
+.drawer {
+  :global {
+    .ant-drawer-body {
+      overflow: hidden;
+    }
+  }
+}
+
+.setServiceWrapper {
+  display: flex;
+  align-items: flex-start;
+  height: 100%;
+}
+
+.spin {
+  height: 100%;
+
+  :global {
+    .ant-spin-nested-loading {
+      height: 100%;
+    }
+
+    .ant-spin-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+  }
+}
+
+.shopListWrapper {
+  width: 100%;
+  height: calc(100vh - 180px);
+  overflow: auto;
+  background-color: #f4f6f9;
+}
+
+.eachShop {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding-left: 16px;
+  cursor: pointer;
+}
+
+.activeShop {
+  color: @egenie-primary-color;
+  background-color: #fff;
+}
+
+.shopConfigWrapper {
+  flex: 1;
+  height: calc(100vh - 130px);
+  padding: 20px 16px;
+  overflow: auto;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.setTitle {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.decoStripe {
+  width: 4px;
+  height: 14px;
+  margin-right: 12px;
+  background-color: @egenie-primary-color;
+}
+
+.eachConfig {
+  margin-bottom: 8px;
+  padding: 15px 12px;
+  background-color: #f8f8f8;
+}
+
+.eachCheckbox {
+  margin-bottom: 4px;
+}
+
+.qualifyLabel {
+  margin-right: 4px;
+  font-weight: 500;
+}
+
+// .tag {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   width: 32px;
+//   height: 20px;
+//   margin-right: 4px;
+// }
+
+.buttonClass {
+  margin-bottom: 4px;
+}
+
+.shopSearch {
+  padding: 8px;
+  background-color: #f4f6f9;
+}
+
+.shopWrapper {
+  width: 180px;
+}

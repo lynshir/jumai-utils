@@ -1,0 +1,70 @@
+.manualDownloadOrder {
+  // 输入框
+  .search {
+    width: 200px;
+  }
+  // 按时间段
+  .rangeDownload {
+    // tip
+    .tip {
+      padding: @egenie-spacing-xss @egenie-spacing-xs;
+      color: @egenie-heading-color;
+      font-size: @egenie-font-size-sm;
+      background-color: rgba(25, 120, 255, 0.2);
+    }
+    // 提示icon
+    .tipIcon {
+      margin-right: @egenie-spacing-xss;
+      color: @egenie-primary-color;
+    }
+    // 表格、时间选择
+    .tableContainer {
+      display: flex;
+      height: 300px;
+      margin-top: @egenie-spacing-sm;
+    }
+    // 表格
+    .table {
+      flex: 1;
+    }
+    // 时间选择器
+    .datePickerBox {
+      width: 260px;
+      margin-left: @egenie-spacing-sm;
+    }
+
+    .datePicker {
+      margin-bottom: @egenie-spacing-xs;
+    }
+  }
+  // 按平台单号
+  .platformNoDownload {
+    display: flex;
+    margin-right: @egenie-spacing-md;
+    // radio
+    .radioGroup {
+      display: flex;
+      flex-direction: column;
+      width: 260px;
+      max-height: 300px;
+      margin: @egenie-spacing-sm @egenie-spacing-sm 0 0;
+      overflow-y: scroll;
+    }
+
+    .radio {
+      margin-bottom: @egenie-spacing-xs;
+    }
+    // 平台单号
+    .platform {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .textArea {
+      flex: 1;
+      min-height: 300px;
+      resize: none;
+    }
+  }
+}

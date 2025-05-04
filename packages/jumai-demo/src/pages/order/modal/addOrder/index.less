@@ -1,0 +1,81 @@
+//全屏弹框样式
+.operationWrapper {
+  padding: 8px;
+
+  :global {
+    .ant-btn.ant-btn-primary {
+      margin-left: 8px;
+    }
+
+    .ant-btn-loading-icon {
+      transform: scale(1);
+    }
+  }
+}
+
+.pd24 {
+  padding: 24px;
+}
+
+.productButtonWrapper {
+  display: flex;
+  margin: 12px 0;
+}
+
+.scdWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  :global {
+    .ant-col.ant-form-item-control {
+      width: 60px;
+    }
+  }
+}
+
+.addressWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.span {
+  display: inline-block;
+  width: 80px;
+  margin-bottom: 12px;
+  color: #2b2e3e;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: right;
+}
+
+.summary {
+  margin-top: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.postFeeWrapper {
+  :global {
+    .ant-input-number.ant-input-number-sm {
+      width: 60px;
+    }
+  }
+}
+
+.mb12 {
+  margin-bottom: 12px;
+}
+
+.operate {
+  position: absolute;
+  top: 8px;
+  right: -64px;
+  z-index: 111;
+}

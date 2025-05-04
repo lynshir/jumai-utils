@@ -1,0 +1,166 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: @egenie-spacing-xs;
+  font-size: @egenie-font-size-md;
+  line-height: @egenie-line-height-md;
+}
+
+.attention {
+  margin-top: @egenie-spacing-sm;
+  color: #fa6868;
+}
+
+.wholesaleBodyHeader {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin-right: 104px;
+  overflow: hidden;
+  color: #2b2e3f;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.safeReturn {
+  height: 20px;
+  color: #2b2e3f;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.money {
+  color: #fb071f;
+  font-size: 14px;
+}
+
+.salesReturn {
+  padding: 4px;
+  color: #999ba4;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  background: #f3f3f3;
+  border-radius: 2px;
+}
+
+.returnService {
+  color: #f2270a;
+  background: rgba(242, 39, 10, 0.1);
+}
+
+.alignRight {
+  width: 100%;
+  text-align: right;
+}
+
+.totalPrice {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 10px;
+  color: #6d6e78;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+
+  > span {
+    color: #e5041a;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 24px;
+  }
+}
+
+.payment {
+  padding: 0 80px;
+}
+
+.wrapper {
+  height: 100% !important;
+
+  :global {
+    .ant-spin-container {
+      height: 100% !important;
+    }
+
+    .ant-spin {
+      max-height: unset !important;
+    }
+  }
+}
+
+.egGridModelSafeReturn {
+  height: 300px;
+  margin-top: 8px;
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.returnServiceFee {
+  color: #2b2e3f;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+
+  > span {
+    color: #6d6e78;
+  }
+}
+
+.priceServiceFee {
+  margin-right: 5px;
+  color: #fb071f !important;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 20px;
+}
+
+.loadingModal {
+  background-color: unset;
+  border-radius: 4px;
+
+  :global {
+    .ant-modal-content,
+    .ant-modal-body {
+      padding: 0 !important;
+      background-color: unset !important;
+    }
+  }
+
+  .loadingContainer {
+    width: 248px;
+    height: 180px;
+    padding-bottom: 16px;
+    color: #333;
+    background-color: #fbfbfb;
+    border-radius: 4px;
+
+    .picture {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: 100%;
+    }
+  }
+}
+
+.wrapperClassName {
+  > div {
+    height: 100vh;
+  }
+}
+
+.treeTitle {
+  display: flex;
+  align-items: center;
+
+  >img {
+    margin-right: 2px;
+  }
+}

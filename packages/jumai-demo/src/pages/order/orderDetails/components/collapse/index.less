@@ -1,0 +1,48 @@
+.collapse {
+  margin-top: 4px;
+  background-color: unset;
+
+  .panel {
+    :global {
+      .ant-collapse-header,
+      .ant-collapse-content-box {
+        padding-left: 0 !important;
+      }
+
+      .ant-collapse-content-box {
+        padding-right: 0 !important;
+      }
+    }
+  }
+}
+
+.renderPanelHeader {
+  display: flex;
+  align-items: center;
+}
+
+.rectangular {
+  width: 4px;
+  height: 14px;
+  margin-right: 8px;
+  background: #1978ff;
+}
+
+.title {
+  margin-right: 10px;
+  color: #2b2e3f;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.iconStyle {
+  color: #c5c3cb;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.titleButton {
+  display: flex;
+  align-items: center;
+  margin-left: @egenie-spacing-sm;
+}

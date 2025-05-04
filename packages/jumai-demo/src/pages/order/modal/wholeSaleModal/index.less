@@ -1,0 +1,238 @@
+.pic {
+  width: 28px;
+  height: 28px;
+  border-radius: @egenie-border-radius-base;
+}
+
+.wholeSaleModal {
+  height: 100% !important;
+  background-color: @egenie-white;
+
+  :global {
+    .ant-spin-container {
+      height: 100% !important;
+    }
+
+    .ant-spin {
+      max-height: unset !important;
+    }
+  }
+
+  .wholesaleBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 1200px;
+    height: 100%;
+    margin: 0 auto;
+    padding-top: @egenie-spacing-sm;
+
+    .wholesaleMainPart {
+      flex: 1;
+      padding-bottom: 8px;
+      overflow: auto;
+
+      .quickSalePredict {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100px;
+        margin: 16px 0;
+        padding-left: 12px;
+        color: #2b2e3e;
+        background-color: #f7f7f7;
+        border: 1px solid #e2e2e5;
+
+        .quickSalePredictText {
+          font-weight: 500;
+          font-size: 24px;
+        }
+      }
+    }
+  }
+
+  .wholesale {
+    height: 94px;
+    padding: @egenie-spacing-sm @egenie-spacing-md;
+    background: #ffeded;
+    border: 1px solid #fea4a4;
+  }
+
+  .safeReturn {
+    color: @egenie-heading-color;
+    font-weight: 500;
+    font-size: @egenie-font-size-md;
+    line-height: @egenie-line-height-md;
+  }
+
+  .describe {
+    height: 20px;
+    margin: 2px 0 @egenie-spacing-xss;
+    color: #888a95;
+    font-size: @egenie-font-size-md;
+    line-height: @egenie-line-height-sm;
+  }
+
+  .selectTips {
+    color: #fb071f;
+    font-size: @egenie-font-size-lg;
+    line-height: @egenie-line-height-md;
+    cursor: pointer;
+
+    .arrowIcon {
+      display: inline-block;
+      margin-left: @egenie-spacing-xss;
+      font-size: @egenie-font-size-sm;
+      transform: rotate(270deg);
+    }
+  }
+
+  .salesReturn {
+    padding: @egenie-spacing-xss;
+    color: @egenie-heading-color;
+    font-size: @egenie-font-size-sm;
+    line-height: @egenie-line-height-sm;
+    border-radius: @egenie-border-radius-base;
+  }
+
+  .returnService {
+    color: @egenie-highlight-color;
+  }
+
+  .alignRight {
+    width: 100%;
+    text-align: right;
+  }
+
+  .wareHouse {
+    display: flex;
+    align-items: center;
+    height: 41px;
+    margin-top: @egenie-spacing-sm;
+    padding-left: @egenie-font-size-lg;
+    color: @egenie-heading-color;
+    font-weight: 500;
+    font-size: @egenie-font-size-sm;
+    line-height: 17px;
+    background: #f7f7f7;
+    border: 1px solid @egenie-border-color-base;
+    border-bottom: none;
+    border-radius: @egenie-border-radius-base @egenie-border-radius-base 0 0;
+
+    .warehouseMark {
+      margin-left: 8px;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+  }
+
+  .egGridModel {
+    height: 300px;
+    overflow: hidden;
+
+    .authorWrapper {
+      line-height: normal;
+    }
+
+    .platformPriceWrapper {
+      display: flex;
+      align-items: center;
+
+      .iconTip {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        margin-left: 2px;
+        color: @egenie-white;
+        background-color: #fb071f;
+        border-radius: 9px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .freightWrapper {
+    display: flex;
+    align-items: center;
+    margin-top: @egenie-spacing-sm;
+
+    .freight {
+      width: 210px;
+    }
+
+    .platformServiceFee {
+      margin-left: 20px;
+    }
+  }
+
+  .wholesaleBodyFooter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 138px;
+    padding-top: 25px;
+    padding-right: 20px;
+    background-color: #f7f7f7;
+    border-top: 1px solid #e2e2e5;
+  }
+
+  .price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: @egenie-text-color;
+    font-size: @egenie-font-size-sm;
+    line-height: @egenie-line-height-sm;
+  }
+
+  .servicePrice {
+    display: flex;
+    align-items: center;
+
+    > span {
+      margin-left: @egenie-spacing-lg;
+    }
+  }
+
+  .totalPrice {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
+    color: @egenie-text-color;
+    font-size: @egenie-font-size-lg;
+    line-height: @egenie-line-height-lg;
+
+    > span {
+      color: #e5041a;
+      font-weight: 500;
+      font-size: 32px;
+      line-height: @egenie-line-height-lg;
+    }
+  }
+
+  .payment {
+    width: 134px;
+    height: 40px;
+    margin: @egenie-spacing-sm 0;
+    padding: 0 35px;
+    border-radius: @egenie-spacing-xss;
+  }
+}
+
+.steps {
+  :global {
+    .ant-steps-item-icon {
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+    }
+
+    .ant-steps-item-tail {
+      left: 12px !important;
+    }
+  }
+}

@@ -1,0 +1,226 @@
+@frontPrimaryColor: #fb071f;
+
+.drawer {
+  .container {
+    padding: 50px 24px 0;
+
+    .header {
+      margin-bottom: 23px;
+
+      p {
+        margin-bottom: initial;
+        color: #888a95;
+        font-size: @egenie-font-size-md;
+        line-height: @egenie-line-height-sm;
+      }
+
+      .title {
+        margin-bottom: @egenie-spacing-xs;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: @egenie-line-height-sm;
+      }
+    }
+
+    .tableContent {
+      height: calc(100vh - 275px);
+      margin-bottom: 44px;
+    }
+  }
+
+  .submitArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    padding: 0 @egenie-spacing-lg;
+    border-top: 1px solid @egenie-border-color-split;
+
+    .resultRight {
+      display: flex;
+      align-items: center;
+
+      .totalCount {
+        font-size: @egenie-font-size-md;
+        line-height: @egenie-line-height-sm;
+      }
+
+      .totalPrice {
+        margin-right: @egenie-spacing-md;
+        color: @frontPrimaryColor;
+        font-size: @egenie-font-size-lg;
+        line-height: @egenie-line-height-md;
+      }
+    }
+  }
+
+  :global {
+    .ant-drawer-body {
+      padding: 0;
+    }
+
+    .ant-drawer-close {
+      margin-right: 24px;
+      padding-top: 32px;
+    }
+
+    .ant-btn-primary {
+      width: 118px;
+      height: 48px;
+      font-size: @egenie-spacing-md;
+      border-radius: 4px;
+    }
+  }
+}
+
+.front {
+  :global {
+    .ant-checkbox-wrapper:hover .ant-checkbox-inner,
+    .ant-checkbox:hover .ant-checkbox-inner,
+    .ant-checkbox-checked:hover,
+    .ant-checkbox-checked::after,
+    .ant-checkbox-input:focus + .ant-checkbox-inner {
+      border-color: @frontPrimaryColor;
+    }
+
+    .ant-checkbox-inner {
+      width: 16px;
+      height: 16px;
+    }
+
+    .ant-checkbox-checked .ant-checkbox-inner {
+      background-color: @frontPrimaryColor;
+      border-color: @frontPrimaryColor;
+    }
+
+    .ant-btn-primary {
+      background: @frontPrimaryColor;
+      border-color: @frontPrimaryColor;
+    }
+
+    .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+      background-color: @frontPrimaryColor;
+    }
+
+    .ant-btn:hover,
+    .ant-btn:focus {
+      color: @frontPrimaryColor;
+      border-color: @frontPrimaryColor;
+    }
+
+    .ant-input-number-focused {
+      box-shadow: unset;
+    }
+  }
+}
+
+.table {
+  height: 100%;
+  border: 1px solid @egenie-border-color-base;
+
+  .tableHeader {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    background-color: #f0f0f0;
+
+    .headerCheckBox {
+      margin-right: 5px;
+      margin-left: @egenie-spacing-md;
+    }
+
+    .headerGoodsInfo {
+      padding-right: 124px;
+      padding-left: 96px;
+    }
+
+    .headerPrice {
+      padding-right: 122px;
+      padding-left: 94px;
+    }
+
+    .headerCount {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .tableBody {
+    height: calc(100% - 48px);
+    overflow-y: auto;
+
+    // 滚动条样式
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c5c3cb;
+      border-radius: 2.5px;
+      -webkit-box-shadow: inset 0 0 4px rgba(197, 195, 203, 1);
+    }
+
+    .tableRow {
+      display: flex;
+      height: 86px;
+      line-height: 80px;
+      border-bottom: 1px solid @egenie-border-color-split;
+
+      .checkbox {
+        padding-right: 37px;
+        padding-left: 15px;
+      }
+
+      .goodsInfo {
+        display: flex;
+        width: 259px;
+        margin-right: 44px;
+        padding-top: 12px;
+
+        .imgFormatter {
+          width: 56px;
+          height: 56px;
+          margin-right: 10px;
+        }
+
+        .goodsName {
+          width: 192px;
+          line-height: 14px;
+        }
+      }
+
+      .price {
+        display: flex;
+        width: 250px;
+        padding-right: @egenie-spacing-md;
+
+        .careFreeLabel {
+          margin-right: 4px;
+          margin-left: 12px;
+          color: @egenie-text-color-secondary;
+        }
+
+        .careFreePrice {
+          color: @frontPrimaryColor;
+        }
+
+        .careFreeLabel,
+        .careFreePrice {
+          display: inline-block;
+          line-height: 22px;
+          vertical-align: middle;
+        }
+      }
+
+      .count {
+        display: flex;
+        flex: 1;
+        align-items: center;
+
+        .countTips {
+          margin-right: 12px;
+        }
+      }
+    }
+  }
+}

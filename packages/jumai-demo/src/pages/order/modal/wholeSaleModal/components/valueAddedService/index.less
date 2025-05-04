@@ -1,0 +1,104 @@
+// 增值服务tip
+.valueAddedServiceTip {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .title {
+    display: flex;
+    align-items: center;
+    height: 24px;
+    background-color: #ffebda;
+    border: 1px solid rgba(255, 153, 72, 0.2);
+    border-bottom: none;
+
+    .titleLogo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 100%;
+      color: #fff;
+      background-color: #ff9948;
+    }
+
+    .titleOther {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      padding-left: 8px;
+      color: #ff9948;
+
+      .setService {
+        margin-left: 8px;
+      }
+    }
+  }
+
+  .valueAddedServiceContent {
+    background-color: #fff;
+    border: 1px solid rgba(255, 153, 72, 0.2);
+    border-top: none;
+
+    .notEnabled {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 68px;
+      margin-left: 12px;
+    }
+  }
+}
+
+.valueAddVosWrapper {
+  display: flex;
+  align-items: center;
+  height: 68px;
+  padding-left: 12px;
+}
+
+.eachAddVo {
+  margin-right: 54px;
+}
+
+.eachAddVoName {
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.eachAddVoAmount {
+  color: #fa6866;
+}
+
+.eachAddVoSecond {
+  color: #6d6e78;
+}
+
+.eachAddVoTip {
+  margin-left: 3px;
+  color: #6d6e78;
+  cursor: pointer;
+}
+
+.eachTd {
+  width: 72px;
+  text-align: center;
+  border-right: 1px solid #e2e2e5;
+
+  &:first-child {
+    background-color: #f3f3f3;
+  }
+
+  & :last-child {
+    border-right: none;
+  }
+}
+
+.tipTable {
+  border: 1px solid #e2e2e5;
+}
+
+.tipTableTr {
+  height: 35px;
+}

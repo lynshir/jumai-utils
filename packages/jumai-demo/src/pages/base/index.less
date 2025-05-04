@@ -1,0 +1,378 @@
+.mb10 {
+  margin-bottom: 10px;
+}
+
+.mr10 {
+  margin-right: 8px;
+}
+
+.wangwangLink {
+  display: inline-flex;
+  margin-right: 4px;
+  //padding: 9px 40px;
+  //background-image: url(https://img.alicdn.com/tps/i4/T1Rsz7FPJaXXbZhKn7-520-240.gif);
+  //background-repeat: no-repeat;
+  //background-position: 0 5px;
+  //background-size: 154px 70px;
+  //cursor: pointer;
+  //zoom: 1;
+  >img {
+    width: 20px;
+  }
+}
+
+.sfTag {
+  width: 300px;
+}
+
+.iconNormal {
+  width: 20px;
+  height: 20px;
+  margin: auto;
+  color: #5c74b2;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.memoHasContent {
+  color: #38d302 !important;
+}
+
+.maskWrapper {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  margin-right: 2px;
+}
+
+.readWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 8px;
+
+  .showValue {
+    flex: 2;
+    margin-right: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .sellerMemo {
+    flex: 2;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .sure {
+    margin-right: 2px;
+    color: red;
+    font-size: 12px;
+  }
+
+  .iconRead {
+    color: #1978ff;
+    font-size: 22px;
+    cursor: pointer;
+  }
+}
+
+.orderDetail {
+  padding: 0;
+}
+
+.overEllipsis {
+  display: inline-block;
+  width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.redirectUrl {
+  display: flex;
+  align-items: center;
+}
+
+.prDetailStyle {
+  width: 16px;
+  height: 16px;
+  color: white;
+  line-height: 16px;
+  text-align: center;
+  background-color: #1978ff;
+  border-radius: 2px;
+}
+
+.picStyle {
+  width: 30px;
+  height: 30px;
+  margin-right: 4px;
+}
+
+.addNumber {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  margin-right: @egenie-spacing-xss;
+  padding: 0 @egenie-spacing-xss;
+  color: @egenie-secondary-color;
+  background: #d7e7ff;
+  border-radius: 10px;
+}
+
+.symbolStyle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 2px;
+  color: white;
+  border-radius: 4px;
+}
+
+.tradeMemo {
+  margin-right: 4px;
+  padding: 2px;
+  color: #1978ff;
+  font-weight: 400;
+  line-height: 20px;
+  background-color: rgba(25, 120, 255, 0.1);
+  border-radius: 4px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.productCell {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
+}
+
+.productImgWrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.popoverTitle {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  > span {
+    font-size: 14px;
+  }
+}
+
+.popoverWrapper {
+  z-index: 999;
+}
+
+.refundStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  margin-right: 2px;
+  padding: 0 6px;
+  color: #fff;
+  font-weight: 400;
+  background-color: red;
+  border-radius: 4px;
+}
+
+.saleOrderTableSkuVoListBody {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  overflow: hidden;
+  cursor: pointer;
+
+  >span {
+    height: 20px;
+    margin-left: 4px;
+    padding: 0 6px;
+    color: #4b6dff;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 20px;
+    background: #d7e7ff;
+    border-radius: 10px;
+  }
+}
+
+.saleOrderTableSkuVoList {
+  display: flex;
+  flex: 2;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+.popoverNoPic {
+  width: 100% !important;
+  height: 124px !important;
+
+  >img {
+    width: 90% !important;
+    height: 124px !important;
+  }
+}
+
+.noPic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  margin-right: 2px;
+  background: #f3f3f3;
+  border-radius: 2px;
+
+  >img {
+    width: 20px;
+    height: 15px;
+  }
+}
+
+.pic {
+  width: 32px;
+  height: 32px;
+  margin-right: 2px;
+  border-radius: 2px;
+}
+
+.saleOrderTableSkuVoListPopover {
+  display: flex;
+  flex-direction: column;
+  width: 140px;
+
+  >img {
+    width: 140px;
+  }
+
+  >span {
+    width: 100%;
+    height: 20px;
+    margin-top: 4px;
+    overflow: hidden;
+    color: #2b2e3f;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.saleOrderPopover {
+  :global {
+    .ant-popover-inner-content {
+      padding: 8px !important;
+    }
+  }
+}
+
+.saleOrderTableSkuVoListSkuNo {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  white-space: pre;
+  text-overflow: ellipsis;
+}
+
+.productDetailsSkuNo {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+
+  > span {
+    width: 100%;
+    min-height: 32px;
+    padding: 6px 0;
+    color: #2b2e3e;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    white-space: pre-wrap;
+  }
+}
+
+.mainCommodity {
+  display: flex;
+  height: 40px;
+  margin-top: 6px;
+  overflow: hidden;
+
+  >img {
+    width: 40px !important;
+    height: 40px !important;
+    overflow: hidden;
+  }
+
+  >div:last-child {
+    display: -webkit-box;
+    flex: 2;
+    height: 40px;
+    margin-left: 4px;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    > span {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 3px;
+      color: #fff;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: center;
+      background: #ff9948;
+      border: 1px solid rgba(255, 153, 72, 0.1);
+      border-radius: 2px;
+    }
+  }
+}
+
+.courierOrderNoImage {
+  width: 20px;
+  cursor: pointer;
+}
+
+.courierOrderNo {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  >span {
+    flex: 2;
+  }
+}
+.saleOrderNoHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.copyMutilColumnsText {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  color:#1978ff;
+}

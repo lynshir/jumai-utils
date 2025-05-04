@@ -2,7 +2,7 @@ import type { UserConfig } from 'jumai-bundler-cli';
 import { theme } from 'jumai-config';
 
 // const target = 'https://cdtestcloudwms.ejingling.cn/';
-const target = 'https://cduatcloudwms.ejingling.cn/';
+const target = 'https://cduaterp.jmaihome.cn/';
 const context = [
   '/api',
   '/sku',

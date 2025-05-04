@@ -15,6 +15,12 @@ export const routes: MenuDataItem[] = [
         exact: true,
         component: React.lazy(() => import('./pages/dashboard')),
       },
+      {
+        path: '/order',
+        title: '订单处理',
+        exact: true,
+        component: React.lazy(() => import('./pages/order')),
+      },
     ],
   },
 ];

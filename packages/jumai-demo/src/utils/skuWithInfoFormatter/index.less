@@ -1,0 +1,44 @@
+.skuContainer,
+.skuComponentContainer {
+  display: flex;
+  align-items: center;
+  // 展示图片
+  .displayImg {
+    width: 30px;
+    height: 30px;
+  }
+  // sku
+  .skuNoBox {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    margin-bottom: 0;
+  }
+
+  .skuNo {
+    width: 200px;
+    margin: 0 @egenie-spacing-xss;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .skuNumber {
+    margin-right: @egenie-spacing-xs;
+    color: @egenie-primary-color;
+  }
+}
+
+.skuComponentContainer {
+  padding: @egenie-spacing-xss 0;
+  border-bottom: 1px solid #f3f3f3;
+
+  .skuNo {
+    margin: 0 @egenie-spacing-xxl 0 @egenie-spacing-xs;
+  }
+
+  &:nth-child(2n) {
+    padding-left: 8px;
+    border-left: 1px solid #f3f3f3;
+  }
+}
