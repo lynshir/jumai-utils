@@ -109,7 +109,7 @@ class PrintHelper {
   private maxRetries = 300;
 
   // 每次重试之间的间隔时间
-  private retryInterval = 100;
+  private retryInterval = 200;
 
   private waitForLimitPrint(): Promise<void> {
     return new Promise((resolve) => {
