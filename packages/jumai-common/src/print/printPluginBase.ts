@@ -127,9 +127,11 @@ export class PrintPluginBase implements PrintAbstract {
         }
         if(this.isBreak || this.isDelay){
           setTimeout(() => {
-            console.log('断连或者更换了平台触发了延迟打印',this.isBreak,this.isDelay);
+            console.log('断连或者更换了平台触发了延迟打印', this.isBreak, this.isDelay);
             this.statusCallback(true);
           }, 1000);
+        }else{
+          this.statusCallback(true);
         }
         
       } else {
