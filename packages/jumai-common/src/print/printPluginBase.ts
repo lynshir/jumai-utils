@@ -89,14 +89,14 @@ export class PrintPluginBase implements PrintAbstract {
           // 监听消息
           this.socket.onmessage = this.onmessage;
         } else {
-          console.log('打印机websocket, ' + this.socketUrl + '已连接');
+          console.log('已有this.socket, ' + this.socketUrl);
         }
         if (this.socket?.readyState === 1) {
-          console.log('连接打印机ready, ' + this.socketUrl);
+          console.log('打印机已连接好ready, ' + this.socketUrl);
           resolve();
         } else {
           this.isBreak = true;
-          console.log('等待连接打印机');
+          console.log('打印机还未连接成功，等待连接打印机','this.isBreak',this.isBreak);
           setTimeout(() => {
             initWebsocket();
           }, 300);
@@ -125,12 +125,14 @@ export class PrintPluginBase implements PrintAbstract {
         if (requestIDItem) {
           requestIDItem.resolve(previewUrls);
         }
-        if(this.isBreak || this.isDelay){
+        if (this.isBreak || this.isDelay) {
+          console.log(this.isBreak, '断连或者更换了平台触发了延迟打印', this.isDelay);
+          this.isBreak = false;
           setTimeout(() => {
-            console.log('断连或者更换了平台触发了延迟打印', this.isBreak, this.isDelay);
             this.statusCallback(true);
           }, 1000);
-        }else{
+        } else {
+          this.isBreak = false;
           this.statusCallback(true);
         }
         
