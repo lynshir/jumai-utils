@@ -55,7 +55,7 @@ export class PrintPluginBase implements PrintAbstract {
 
           // open
           this.socket.onopen = (event) => {
-            console.log(`browser onopen event:${JSON.stringify(event)}`);
+            console.log(`browser onopen event:${JSON.stringify(event)}-连接打印机成功，${new Date().toLocaleTimeString()}`);
             this.isConnected = true;
           };
 

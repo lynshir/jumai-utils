@@ -118,6 +118,7 @@ class PrintHelper {
           resolve();
         } else {
           setTimeout(() => {
+            console.log('正在等待上次打印完成。。。。。。。。。。。。。。。。。。');
             this.retryCount++;
             checkLimitPrint();
           }, this.retryInterval);
