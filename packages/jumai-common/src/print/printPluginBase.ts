@@ -34,6 +34,8 @@ export class PrintPluginBase implements PrintAbstract {
 
   private isConnected = false;
 
+  private isDelay = false;
+
   private async sendToPrinter(request: RequestProtocol): Promise<any> {
     await this.connectWebsocket();
     return new Promise((resolve, reject) => {
@@ -45,7 +47,8 @@ export class PrintPluginBase implements PrintAbstract {
       this.socket.send(JSON.stringify(request));
     });
   }
-
+ // 如果打印机连接断开，设置标记，该标记用于等待一次完成的打印
+  public isBreak = false;
   public connectWebsocket = (): Promise<void> => {
     return new Promise((resolve, reject) => {
       const initWebsocket = () => {
@@ -92,10 +95,11 @@ export class PrintPluginBase implements PrintAbstract {
           console.log('连接打印机ready, ' + this.socketUrl);
           resolve();
         } else {
+          this.isBreak = true;
           console.log('等待连接打印机');
           setTimeout(() => {
             initWebsocket();
-          }, 500);
+          }, 300);
         }
       };
       initWebsocket();
@@ -109,6 +113,7 @@ export class PrintPluginBase implements PrintAbstract {
     if (response.cmd === 'getPrinters' && requestIDItem) {
       requestIDItem.resolve((response.printers || []).map((item) => item.name));
       this.taskRequest.delete(response.requestID);
+      this.isBreak = false;
       this.statusCallback(true);
     } else if (response.cmd === 'print') {
       if (response.status === 'success') {
@@ -120,8 +125,15 @@ export class PrintPluginBase implements PrintAbstract {
         if (requestIDItem) {
           requestIDItem.resolve(previewUrls);
         }
-        this.statusCallback(true);
+        if(this.isBreak || this.isDelay){
+          setTimeout(() => {
+            console.log('断连或者更换了平台触发了延迟打印',this.isBreak,this.isDelay);
+            this.statusCallback(true);
+          }, 1000);
+        }
+        
       } else {
+        this.isBreak = false;
         const msg = response?.msg ?? '请求失败';
         message.error(msg);
 
@@ -133,6 +145,7 @@ export class PrintPluginBase implements PrintAbstract {
 
       // 得物预览
     } else if (response.cmd === 'preview') {
+      this.isBreak = false;
       const previewUrl = response.previewUrl;
       if (previewUrl) {
         window.open(previewUrl);
@@ -143,6 +156,7 @@ export class PrintPluginBase implements PrintAbstract {
       }
       this.taskRequest.delete(response.requestID);
     } else if (response.cmd === 'notifyPrintResult' || response.cmd === 'PrintResultNotify') {
+      this.isBreak = false;
       if (response.status === 'failed') {
         const msg = response?.printStatus?.[0]?.msg || response?.msg || '请求失败';
         message.error(msg);
@@ -174,8 +188,9 @@ export class PrintPluginBase implements PrintAbstract {
     cmd,
   }: // 得物预览和其它有所区别
   // eslint-disable-next-line require-await
-  CommonPrintParams & { cmd?: 'preview' }): Promise<any> => {
-    validateData(contents);
+  CommonPrintParams & { cmd?: 'preview' }, isDelay = false): Promise<any> => {
+    validateData(contents);``
+    this.isDelay = isDelay;
     return this.sendToPrinter({
       cmd: cmd || 'print',
       requestID: getUUID(),

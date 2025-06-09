@@ -26,6 +26,7 @@ class PrintHelper {
    * 切换到lodop---兼容原来
    */
   public readonly setPrintingStatus = (printFinished :boolean) => {
+    console.log('更新状态', printFinished);
     this.printingStatus = !printFinished;
   };
 
@@ -129,6 +130,9 @@ class PrintHelper {
     });
   }
 
+  // 上次打印的状态，如果新状态不一致，则下次打印等待500ms
+  public preState : ENUM_PRINT_PLUGIN_TYPE = ENUM_PRINT_PLUGIN_TYPE.rookieCustomOld;
+  public isDelay = false;
   /**
    * 打印代理
    * 菜鸟旧版和lodop先切换打印类型,否则后果自负
@@ -147,7 +151,12 @@ class PrintHelper {
       state: params.state != null ? params.state : this.state,
     };
     const printer = formatPrintName(params.templateData, params.printer);
-
+    if(params.state !== this.preState) {
+      this.preState = params.state;
+      this.isDelay = true;
+    } else {
+      this.isDelay = false;
+    }
     switch (params.state) {
       case ENUM_PRINT_PLUGIN_TYPE.jdCloud:
       case ENUM_PRINT_PLUGIN_TYPE.jdErp: {
@@ -169,7 +178,7 @@ class PrintHelper {
             contents,
             printer,
             previewType: params.previewType,
-          });
+          }, this.isDelay);
         }
         break;
       }
@@ -183,7 +192,7 @@ class PrintHelper {
             contents,
             printer,
             previewType: params.previewType,
-          });
+          }, this.isDelay);
         }
         break;
       }
@@ -197,7 +206,7 @@ class PrintHelper {
             preview: params.preview,
             contents,
             printer,
-          });
+          }, this.isDelay);
         }
         break;
       }
@@ -212,7 +221,7 @@ class PrintHelper {
             preview: params.preview,
             contents,
             printer,
-          });
+          }, this.isDelay);
         }
         break;
       }
@@ -226,7 +235,7 @@ class PrintHelper {
             preview: params.preview,
             contents,
             printer,
-          });
+          }, this.isDelay);
         }
         break;
       }
@@ -255,7 +264,7 @@ class PrintHelper {
             preview: params.preview,
             contents,
             printer,
-          });
+          }, this.isDelay);
         }
         break;
       }
