@@ -17,16 +17,15 @@ interface Response {
     name: string;
     displayName: string;
   }>;
-  results?: Array<{ taskID?: string; ewaybillOrderID?: string; success?: boolean; failureReason?: string; }>;
+  results?: Array<{ taskID?: string; ewaybillOrderID?: string; success?: boolean; failureReason?: string }>;
 }
 
 export class ChannelsShopPrint implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly statusCallback: (isSuccess: boolean) => void) {
-  }
+  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly loopPrintCallback: () => void) {}
 
   private socket: WebSocket;
 
-  private taskRequest = new Map<string, { request: RequestProtocol; resolve?: (...args: any[]) => any; reject?: (...args: any[]) => any; }>();
+  private taskRequest = new Map<string, { request: RequestProtocol; resolve?: (...args: any[]) => any; reject?: (...args: any[]) => any }>();
 
   private isConnected = false;
 
@@ -70,6 +69,7 @@ export class ChannelsShopPrint implements PrintAbstract {
               }
             }
             this.taskRequest.clear();
+            this.loopPrintCallback();
           };
 
           // 关闭
@@ -104,7 +104,7 @@ export class ChannelsShopPrint implements PrintAbstract {
     const requestIDItem = this.taskRequest.get(response.requestID);
 
     if (response.command === 'getPrinterList' && requestIDItem) {
-      this.statusCallback(true);
+      // this.statusCallback(true);
       requestIDItem.resolve((response.printerList || []).map((item) => item.name));
       this.taskRequest.delete(response.requestID);
     } else if (response.command === 'print' && requestIDItem) {
@@ -114,10 +114,11 @@ export class ChannelsShopPrint implements PrintAbstract {
         requestIDItem.reject(errorItem.failureReason);
         message.error(errorItem.failureReason || '打印失败');
       } else {
-        this.statusCallback(true);
+        // this.statusCallback(true);
         requestIDItem.resolve();
       }
       this.taskRequest.delete(response.requestID);
+      this.loopPrintCallback();
     }
   };
 
@@ -134,10 +135,7 @@ export class ChannelsShopPrint implements PrintAbstract {
   /**
    * 打印
    */
-  public print = async({
-    contents,
-    printer,
-  }: CommonPrintParams): Promise<any> => {
+  public print = async ({ contents, printer }: CommonPrintParams): Promise<any> => {
     validateData(contents);
     await this.sendToPrinter({
       command: 'print',

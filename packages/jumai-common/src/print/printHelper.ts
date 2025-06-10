@@ -6,7 +6,21 @@ import { LodopPrint } from './lodopPrint';
 import { PrintPluginBase } from './printPluginBase';
 import type { CommonPrintParams, KsPrintParams, PddPrintParams } from './types';
 import { ENUM_PRINT_PLUGIN_TYPE } from './types';
-import { formatDyData, formatJdData, formatKsData, formatChannelsShopData, formatPddData, formatPrintName, formatRookieCustomData, formatRookieData, formatVopData, formatXiaoHongShuData, sliceData, validateData, formatDwData } from './utils';
+import {
+  formatDyData,
+  formatJdData,
+  formatKsData,
+  formatChannelsShopData,
+  formatPddData,
+  formatPrintName,
+  formatRookieCustomData,
+  formatRookieData,
+  formatVopData,
+  formatXiaoHongShuData,
+  sliceData,
+  validateData,
+  formatDwData,
+} from './utils';
 
 function openError(platform: string): string {
   return `系统未连接打印控件\n。请在首页安装${platform}且正常启动打印组件后重启浏览器`;
@@ -25,28 +39,42 @@ class PrintHelper {
   /**
    * 切换到lodop---兼容原来
    */
-  public readonly setPrintingStatus = (printFinished :boolean) => {
+  public readonly setPrintingStatus = (printFinished: boolean) => {
     console.log('更新状态', printFinished);
     this.printingStatus = !printFinished;
   };
 
-  private readonly rookiePrintPlugin = new PrintPluginBase('ws://127.0.0.1:13528', openError('菜鸟'), this.setPrintingStatus);
+  /**
+   * 第一次直接调用执行，之后通过各个打印组件打印完成的回调来调用
+   * 如果printQueue.length为0，说明队列已打印完，重置第一次打印标记为true，否则下一次进来无法开始打印
+   */
+  public loopPrintQueue = async (): Promise<void> => {
+    if (this.printQueue.length === 0) {
+      this.isFirstPrint = true;
+      return;
+    }
+    const item = this.printQueue.shift();
+    const { state, printData } = item;
+    this.sendPrint(state, printData);
+  };
 
-  private readonly xiaoHongShuPrintPlugin = new PrintPluginBase('ws://127.0.0.1:10818', openError('小红书'),this.setPrintingStatus);
+  private readonly rookiePrintPlugin = new PrintPluginBase('ws://127.0.0.1:13528', openError('菜鸟'), this.loopPrintQueue);
 
-  private readonly pddPrintPlugin = new PrintPluginBase('ws://127.0.0.1:5000', openError('拼多多'), this.setPrintingStatus);
+  private readonly xiaoHongShuPrintPlugin = new PrintPluginBase('ws://127.0.0.1:10818', openError('小红书'), this.loopPrintQueue);
 
-  private readonly dyPrintPlugin = new PrintPluginBase('ws://127.0.0.1:13888', openError('抖音'), this.setPrintingStatus);
+  private readonly pddPrintPlugin = new PrintPluginBase('ws://127.0.0.1:5000', openError('拼多多'), this.loopPrintQueue);
 
-  private readonly ksPrintPlugin = new PrintPluginBase('ws://127.0.0.1:16888/ks/printer', openError('快手'), this.setPrintingStatus);
+  private readonly dyPrintPlugin = new PrintPluginBase('ws://127.0.0.1:13888', openError('抖音'), this.loopPrintQueue);
 
-  private readonly dwPrintPlugin = new PrintPluginBase('ws://127.0.0.1:23825', openError('得物'), this.setPrintingStatus);
+  private readonly ksPrintPlugin = new PrintPluginBase('ws://127.0.0.1:16888/ks/printer', openError('快手'), this.loopPrintQueue);
 
-  private readonly jdPrintPlugin = new JdPrint('ws://127.0.0.1:9113', openError('京东'), this.setPrintingStatus);
+  private readonly dwPrintPlugin = new PrintPluginBase('ws://127.0.0.1:23825', openError('得物'), this.loopPrintQueue);
 
-  private readonly channelsShopPrintPlugin = new ChannelsShopPrint('ws://127.0.0.1:12705', openError('视频号'), this.setPrintingStatus);
+  private readonly jdPrintPlugin = new JdPrint('ws://127.0.0.1:9113', openError('京东'), this.loopPrintQueue);
 
-  private readonly aiKuCunPrintPlugin = new AiKuCunPrint('ws://localhost:2750', openError('爱库存'), this.setPrintingStatus);
+  private readonly channelsShopPrintPlugin = new ChannelsShopPrint('ws://127.0.0.1:12705', openError('视频号'), this.loopPrintQueue);
+
+  private readonly aiKuCunPrintPlugin = new AiKuCunPrint('ws://localhost:2750', openError('爱库存'), this.loopPrintQueue);
 
   public readonly lodopPrintPlugin = new LodopPrint();
 
@@ -76,7 +104,7 @@ class PrintHelper {
   /**
    * 获取打印机
    */
-  public readonly getPrinters = async(): Promise<string[]> => {
+  public readonly getPrinters = async (): Promise<string[]> => {
     const printPlugins = [
       this.lodopPrintPlugin,
       this.rookiePrintPlugin,
@@ -103,45 +131,28 @@ class PrintHelper {
     return printers;
   };
 
-  // 记录当前重试次数
-  private retryCount = 0;
-
-  // 最多重试 3 次
-  private maxRetries = 40;
-
-  // 每次重试之间的间隔时间
-  private retryInterval = 300;
-
-  private waitForLimitPrint(): Promise<void> {
-    return new Promise((resolve) => {
-      const checkLimitPrint = () => {
-        if (!this.printingStatus || this.retryCount >= this.maxRetries) {
-          resolve();
-        } else {
-          setTimeout(() => {
-            console.log('正在等待上次打印完成。。。。。。。。。。。。。。。。。。');
-            this.retryCount++;
-            checkLimitPrint();
-          }, this.retryInterval);
-        }
-      };
-
-      checkLimitPrint();
-    });
-  }
-
   // 上次打印的状态，如果新状态不一致，则下次打印等待500ms
-  public preState : ENUM_PRINT_PLUGIN_TYPE = ENUM_PRINT_PLUGIN_TYPE.rookieCustomOld;
+  public preState: ENUM_PRINT_PLUGIN_TYPE = ENUM_PRINT_PLUGIN_TYPE.rookieCustomOld;
   public isDelay = false;
-  /**
-   * 打印代理
-   * 菜鸟旧版和lodop先切换打印类型,否则后果自负
-   */
-  public readonly print = async(params: CommonPrintParams | PddPrintParams | KsPrintParams): Promise<any> => {
-    await this.waitForLimitPrint();
-    // 正在打印
-    this.printingStatus = true;
-    this.retryCount = 0;
+
+  public printQueue: Array<{ state: ENUM_PRINT_PLUGIN_TYPE; printData: any }> = [];
+  private isFirstPrint: boolean = true;
+
+  private onFirstPrint = () => {
+    if (this.isFirstPrint) {
+      this.isFirstPrint = false;
+      this.loopPrintQueue();
+    }
+  };
+
+  public clearQueue = () => {
+    this.printQueue = [];
+  };
+  public readonly print = async (params: CommonPrintParams | PddPrintParams | KsPrintParams): Promise<any> => {
+    // await this.waitForLimitPrint();
+    // // 正在打印
+    // this.printingStatus = true;
+    // this.retryCount = 0;
 
     validateData(params.contents);
     params = {
@@ -151,20 +162,17 @@ class PrintHelper {
       state: params.state != null ? params.state : this.state,
     };
     const printer = formatPrintName(params.templateData, params.printer);
-    if(params.state !== this.preState) {
-      this.preState = params.state;
-      this.isDelay = true;
-    } else {
-      this.isDelay = false;
-    }
     switch (params.state) {
       case ENUM_PRINT_PLUGIN_TYPE.jdCloud:
       case ENUM_PRINT_PLUGIN_TYPE.jdErp: {
         const printData = formatJdData(params.contents, params.state, params.preview, printer);
         validateData(printData);
         for (let i = 0; i < printData.length; i++) {
-          await this.jdPrintPlugin.print(printData[i]);
+          // this.printQueue.push({ [params.state]: printData[i] });
+          this.printQueue.push({ state: params.state, printData: printData[i] });
+          // await this.jdPrintPlugin.print(printData[i]);
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.rookieCustomOld:
@@ -173,13 +181,27 @@ class PrintHelper {
 
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatRookieData(pageData[i], params.state, params.templateData);
-          await this.rookiePrintPlugin.print({
-            preview: params.preview,
-            contents,
-            printer,
-            previewType: params.previewType,
-          }, this.isDelay);
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              preview: params.preview,
+              contents,
+              printer,
+              previewType: params.previewType,
+            },
+          });
+
+          // await this.rookiePrintPlugin.print(
+          //   {
+          //     preview: params.preview,
+          //     contents,
+          //     printer,
+          //     previewType: params.previewType,
+          //   },
+          //   this.isDelay,
+          // );
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.rookieCustom: {
@@ -187,13 +209,26 @@ class PrintHelper {
 
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatRookieCustomData(pageData[i], params.templateData);
-          await this.rookiePrintPlugin.print({
-            preview: params.preview,
-            contents,
-            printer,
-            previewType: params.previewType,
-          }, this.isDelay);
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              preview: params.preview,
+              contents,
+              printer,
+              previewType: params.previewType,
+            },
+          });
+          // await this.rookiePrintPlugin.print(
+          //   {
+          //     preview: params.preview,
+          //     contents,
+          //     printer,
+          //     previewType: params.previewType,
+          //   },
+          //   this.isDelay,
+          // );
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.dyCloud:
@@ -202,12 +237,24 @@ class PrintHelper {
 
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatDyData(pageData[i], params.state);
-          await this.dyPrintPlugin.print({
-            preview: params.preview,
-            contents,
-            printer,
-          }, this.isDelay);
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              preview: params.preview,
+              contents,
+              printer,
+            },
+          });
+          // await this.dyPrintPlugin.print(
+          //   {
+          //     preview: params.preview,
+          //     contents,
+          //     printer,
+          //   },
+          //   this.isDelay,
+          // );
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.ksCloud:
@@ -217,12 +264,24 @@ class PrintHelper {
 
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatKsData(pageData[i], params.state, params.cpCode);
-          await this.ksPrintPlugin.print({
-            preview: params.preview,
-            contents,
-            printer,
-          }, this.isDelay);
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              preview: params.preview,
+              contents,
+              printer,
+            },
+          });
+          // await this.ksPrintPlugin.print(
+          //   {
+          //     preview: params.preview,
+          //     contents,
+          //     printer,
+          //   },
+          //   this.isDelay,
+          // );
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.pddCloud:
@@ -231,27 +290,49 @@ class PrintHelper {
 
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatPddData(pageData[i], params.state, params.courierPrintType);
-          await this.pddPrintPlugin.print({
-            preview: params.preview,
-            contents,
-            printer,
-          }, this.isDelay);
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              preview: params.preview,
+              contents,
+              printer,
+            },
+          });
+          // await this.pddPrintPlugin.print(
+          //   {
+          //     preview: params.preview,
+          //     contents,
+          //     printer,
+          //   },
+          //   this.isDelay,
+          // );
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.lodop: {
         const pageData = sliceData(params.contents, params.count);
 
         for (let i = 0; i < pageData.length; i++) {
-          await this.lodopPrintPlugin.print({
-            preview: params.preview,
-            printer,
-            contents: pageData[i],
-            templateData: params.templateData,
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              preview: params.preview,
+              printer,
+              contents: pageData[i],
+              templateData: params.templateData,
+            },
           });
+          // await this.lodopPrintPlugin.print({
+          //   preview: params.preview,
+          //   printer,
+          //   contents: pageData[i],
+          //   templateData: params.templateData,
+          // });
         }
         // lodop打印条码不阻塞
         this.printingStatus = false;
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.dw: {
@@ -259,13 +340,26 @@ class PrintHelper {
 
         for (let i = 0; i < pageData.length; i++) {
           const contents = await formatDwData(pageData[i]);
-          await this.dwPrintPlugin.print({
-            cmd: params.preview ? 'preview' : undefined,
-            preview: params.preview,
-            contents,
-            printer,
-          }, this.isDelay);
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              cmd: params.preview ? 'preview' : undefined,
+              preview: params.preview,
+              contents,
+              printer,
+            },
+          });
+          // await this.dwPrintPlugin.print(
+          //   {
+          //     cmd: params.preview ? 'preview' : undefined,
+          //     preview: params.preview,
+          //     contents,
+          //     printer,
+          //   },
+          //   this.isDelay,
+          // );
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp:
@@ -274,12 +368,21 @@ class PrintHelper {
         console.log(pageData, '小红书打印数据');
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatXiaoHongShuData(pageData[i], params.state);
-          await this.xiaoHongShuPrintPlugin.print({
-            preview: params.preview,
-            contents,
-            printer,
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              preview: params.preview,
+              contents,
+              printer,
+            },
           });
+          // await this.xiaoHongShuPrintPlugin.print({
+          //   preview: params.preview,
+          //   contents,
+          //   printer,
+          // });
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.vopCloud:
@@ -288,12 +391,21 @@ class PrintHelper {
 
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatVopData(pageData[i], params.state);
-          await this.rookiePrintPlugin.print({
-            preview: params.preview,
-            contents,
-            printer,
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              preview: params.preview,
+              contents,
+              printer,
+            },
           });
+          // await this.rookiePrintPlugin.print({
+          //   preview: params.preview,
+          //   contents,
+          //   printer,
+          // });
         }
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.channelsShop: {
@@ -301,19 +413,99 @@ class PrintHelper {
 
         for (let i = 0; i < pageData.length; i++) {
           const contents = formatChannelsShopData(pageData[i]);
-          await this.channelsShopPrintPlugin.print({
-            ...params,
-            preview: params.preview,
-            printer,
-            contents,
-          }
-          );
+          this.printQueue.push({
+            state: params.state,
+            printData: {
+              ...params,
+              preview: params.preview,
+              printer,
+              contents,
+            },
+          });
+          // await this.channelsShopPrintPlugin.print({
+          //   ...params,
+          //   preview: params.preview,
+          //   printer,
+          //   contents,
+          // });
         }
-
+        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.aiKuCun: {
-        await this.aiKuCunPrintPlugin.print({ contents: params.contents });
+        this.printQueue.push({
+          state: params.state,
+          printData: {
+            contents: params.contents,
+          },
+        });
+        // await this.aiKuCunPrintPlugin.print({ contents: params.contents });
+        this.onFirstPrint();
+        break;
+      }
+      default:
+        throw new Error('插件类型不存在,在外部被非法改掉');
+    }
+  };
+
+  private readonly sendPrint = async (state: ENUM_PRINT_PLUGIN_TYPE, printData): Promise<any> => {
+    switch (state) {
+      case ENUM_PRINT_PLUGIN_TYPE.jdCloud:
+      case ENUM_PRINT_PLUGIN_TYPE.jdErp: {
+        await this.jdPrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.rookieCustomOld:
+      case ENUM_PRINT_PLUGIN_TYPE.rookieErp: {
+        await this.rookiePrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.rookieCustom: {
+        await this.rookiePrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.dyCloud:
+      case ENUM_PRINT_PLUGIN_TYPE.dyErp: {
+        await this.dyPrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.ksCloud:
+      case ENUM_PRINT_PLUGIN_TYPE.ksErp: {
+        // 快手建议10条以内
+        await this.ksPrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.pddCloud:
+      case ENUM_PRINT_PLUGIN_TYPE.pddErp: {
+        await this.pddPrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.lodop: {
+        await this.lodopPrintPlugin.print(printData);
+        // lodop打印条码不阻塞
+        // this.printingStatus = false;
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.dw: {
+        await this.dwPrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp:
+      case ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuCloud: {
+        await this.xiaoHongShuPrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.vopCloud:
+      case ENUM_PRINT_PLUGIN_TYPE.vopErp: {
+        await this.rookiePrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.channelsShop: {
+        await this.channelsShopPrintPlugin.print(printData);
+        break;
+      }
+      case ENUM_PRINT_PLUGIN_TYPE.aiKuCun: {
+        await this.aiKuCunPrintPlugin.print(printData);
         break;
       }
       default:

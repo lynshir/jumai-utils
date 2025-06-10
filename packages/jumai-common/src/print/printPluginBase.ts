@@ -15,7 +15,7 @@ interface Response {
   cmd: 'getPrinters' | 'print' | 'notifyPrintResult' | 'PrintResultNotify' | 'preview';
   status: 'success' | 'failed';
   previewURL?: string;
-
+  taskStatus?: 'failed' | 'printed' | 'partPrinted' | 'rendered'; // 打印任务状态
   // 得物预览
   previewUrl?: string;
   msg?: string;
@@ -25,7 +25,7 @@ interface Response {
 }
 
 export class PrintPluginBase implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly statusCallback: (isSuccess: boolean) => void) {}
+  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly loopPrintCallback: () => void) {}
 
   private socket: WebSocket;
 
@@ -33,8 +33,6 @@ export class PrintPluginBase implements PrintAbstract {
   private taskRequest = new Map<string, { request: RequestProtocol; resolve?: Function; reject?: Function }>();
 
   private isConnected = false;
-
-  private isDelay = false;
 
   private async sendToPrinter(request: RequestProtocol): Promise<any> {
     await this.connectWebsocket();
@@ -47,7 +45,7 @@ export class PrintPluginBase implements PrintAbstract {
       this.socket.send(JSON.stringify(request));
     });
   }
- // 如果打印机连接断开，设置标记，该标记用于等待一次完成的打印
+  // 如果打印机连接断开，设置标记，该标记用于等待一次完成的打印
   public isBreak = false;
   public connectWebsocket = (): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -76,6 +74,7 @@ export class PrintPluginBase implements PrintAbstract {
             }
 
             this.taskRequest.clear();
+            this.loopPrintCallback();
           };
 
           // 关闭
@@ -92,11 +91,11 @@ export class PrintPluginBase implements PrintAbstract {
           console.log('已有this.socket, ' + this.socketUrl);
         }
         if (this.socket?.readyState === 1) {
-          console.log('打印机已连接好ready, ' + this.socketUrl);
+          console.log('打印机ready, ' + this.socketUrl);
           resolve();
         } else {
           this.isBreak = true;
-          console.log('打印机还未连接成功，等待连接打印机','this.isBreak',this.isBreak);
+          console.log('打印机还未连接成功，等待连接打印机', 'this.isBreak', this.isBreak);
           setTimeout(() => {
             initWebsocket();
           }, 300);
@@ -113,9 +112,10 @@ export class PrintPluginBase implements PrintAbstract {
     if (response.cmd === 'getPrinters' && requestIDItem) {
       requestIDItem.resolve((response.printers || []).map((item) => item.name));
       this.taskRequest.delete(response.requestID);
-      this.isBreak = false;
-      this.statusCallback(true);
-    } else if (response.cmd === 'print') {
+      this.loopPrintCallback();
+      return;
+    }
+    if (response.cmd === 'print') {
       if (response.status === 'success') {
         const previewUrls: string[] = [].concat(response.previewURL || response?.previewImage).filter(Boolean);
         if (previewUrls.length) {
@@ -125,19 +125,7 @@ export class PrintPluginBase implements PrintAbstract {
         if (requestIDItem) {
           requestIDItem.resolve(previewUrls);
         }
-        if (this.isBreak || this.isDelay) {
-          console.log(this.isBreak, '断连或者更换了平台触发了延迟打印', this.isDelay);
-          this.isBreak = false;
-          setTimeout(() => {
-            this.statusCallback(true);
-          }, 1000);
-        } else {
-          this.isBreak = false;
-          this.statusCallback(true);
-        }
-        
       } else {
-        this.isBreak = false;
         const msg = response?.msg ?? '请求失败';
         message.error(msg);
 
@@ -149,7 +137,7 @@ export class PrintPluginBase implements PrintAbstract {
 
       // 得物预览
     } else if (response.cmd === 'preview') {
-      this.isBreak = false;
+      console.log('预览');
       const previewUrl = response.previewUrl;
       if (previewUrl) {
         window.open(previewUrl);
@@ -159,13 +147,20 @@ export class PrintPluginBase implements PrintAbstract {
         requestIDItem.resolve(previewUrl);
       }
       this.taskRequest.delete(response.requestID);
+      this.loopPrintCallback();
     } else if (response.cmd === 'notifyPrintResult' || response.cmd === 'PrintResultNotify') {
-      this.isBreak = false;
+      console.log(response, '-', response.cmd, '-', response?.taskStatus, response.status, '-', '打印通知response');
+      const taskStatus = response?.taskStatus;
+      if (taskStatus === 'printed' || taskStatus === 'partPrinted') {
+        this.loopPrintCallback();
+      }
       if (response.status === 'failed') {
         const msg = response?.printStatus?.[0]?.msg || response?.msg || '请求失败';
         message.error(msg);
+        this.loopPrintCallback();
       } else if (response.previewURL) {
         window.open(response.previewURL);
+        this.loopPrintCallback();
       }
     }
   };
@@ -184,17 +179,19 @@ export class PrintPluginBase implements PrintAbstract {
   /**
    * 打印
    */
-  public print = async ({
-    preview,
-    contents,
-    printer,
-    previewType = 'pdf',
-    cmd,
-  }: // 得物预览和其它有所区别
-  // eslint-disable-next-line require-await
-  CommonPrintParams & { cmd?: 'preview' }, isDelay = false): Promise<any> => {
-    validateData(contents);``
-    this.isDelay = isDelay;
+  public print = async (
+    {
+      preview,
+      contents,
+      printer,
+      previewType = 'pdf',
+      cmd,
+    }: // 得物预览和其它有所区别
+    // eslint-disable-next-line require-await
+    CommonPrintParams & { cmd?: 'preview' },
+    isDelay = false,
+  ): Promise<any> => {
+    validateData(contents);
     return this.sendToPrinter({
       cmd: cmd || 'print',
       requestID: getUUID(),

@@ -3,7 +3,6 @@ import type { PrintAbstract, CommonPrintParams } from './types';
 import { getUUID, handleSocketDisconnectNotification } from './utils';
 
 interface JdParams {
-
   /**
    * 京东打印自定义数据
    */
@@ -61,7 +60,7 @@ function downloadImage(imgSrc: string, name?: string): void {
 
   // 解决跨域 Canvas 污染问题
   image.setAttribute('crossOrigin', 'anonymous');
-  image.onload = function() {
+  image.onload = function () {
     const canvas = document.createElement('canvas');
     canvas.width = image.width;
     canvas.height = image.height;
@@ -78,13 +77,12 @@ function downloadImage(imgSrc: string, name?: string): void {
 }
 
 export class JdPrint implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly statusCallback: (isSuccess: boolean) => void) {
-  }
+  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly loopPrintCallback: () => void) {}
 
   private socket: WebSocket;
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  private taskRequest = new Map<string, { request: RequestProtocol; resolve?: Function; reject?: Function; }>();
+  private taskRequest = new Map<string, { request: RequestProtocol; resolve?: Function; reject?: Function }>();
 
   private isConnected = false;
 
@@ -115,6 +113,7 @@ export class JdPrint implements PrintAbstract {
               }
             }
             this.taskRequest.clear();
+            this.loopPrintCallback();
           };
 
           // 关闭
@@ -146,15 +145,8 @@ export class JdPrint implements PrintAbstract {
 
   private onmessage = (event: MessageEvent) => {
     const response: IPrintResponse = JSON.parse(event.data);
-    const {
-      reject,
-      resolve,
-    } = (this.taskRequest.get(response.key) || {});
-    const {
-      code,
-      success,
-      content,
-    } = response;
+    const { reject, resolve } = this.taskRequest.get(response.key) || {};
+    const { code, success, content } = response;
     console.log(response, 'response');
     if (success === 'false') {
       const msg = response?.message ?? '请求失败';
@@ -164,7 +156,7 @@ export class JdPrint implements PrintAbstract {
       }
       this.taskRequest.delete(response?.key);
     } else if (success === 'true') {
-      this.statusCallback(true);
+      // this.statusCallback(true);
       // 2：批量推送打印，6：获取打印机列表，8：预览
       // 返回内容，获取打印机时，返回为 打印机逗号分隔字符串；获取预览时，返回为base64格式图片字符串
       if (code === '2') {
@@ -185,6 +177,7 @@ export class JdPrint implements PrintAbstract {
       }
       this.taskRequest.delete(response?.key);
     }
+    this.loopPrintCallback();
   };
 
   public async sendToPrinter(request: RequestProtocol): Promise<any> {
@@ -207,31 +200,29 @@ export class JdPrint implements PrintAbstract {
   };
 
   // 打印
-  public print = ({
-    printer,
-    preview,
-    customData,
-    customTempUrl,
-    printData,
-    tempUrl,
-  }: JdParams) => {
-    return this.sendToPrinter(this.getPrintParam(preview ? 'PRE_View' : 'PRINT', {
-      printName: printer,
-      customData,
-      customTempUrl,
-      printData,
-      tempUrl,
-    }));
+  public print = ({ printer, preview, customData, customTempUrl, printData, tempUrl }: JdParams) => {
+    return this.sendToPrinter(
+      this.getPrintParam(preview ? 'PRE_View' : 'PRINT', {
+        printName: printer,
+        customData,
+        customTempUrl,
+        printData,
+        tempUrl,
+      }),
+    );
   };
 
   /**
    * 获取请求协议
    */
-  private getPrintParam = (cmd: TOrderType, parameters: IParameters = {
-    tempUrl: '',
-    printName: '',
-    printData: [],
-  }): RequestProtocol => {
+  private getPrintParam = (
+    cmd: TOrderType,
+    parameters: IParameters = {
+      tempUrl: '',
+      printName: '',
+      printData: [],
+    },
+  ): RequestProtocol => {
     return {
       orderType: cmd,
       key: getUUID(8, 16),

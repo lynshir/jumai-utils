@@ -1,17 +1,17 @@
 import { message } from 'antd';
 import type { PrintAbstract, CommonPrintParams } from './types';
-import {handleSocketDisconnectNotification, validateData } from './utils';
+import { handleSocketDisconnectNotification, validateData } from './utils';
 
 type Fn = (...args: any[]) => any;
 
 interface PrintMapItem {
-  request: { requestId: string; };
+  request: { requestId: string };
   resolve: Fn;
   reject: Fn;
 }
 
 interface PrinterQueueItem {
-  request: { esubrc: 'printerInfoQuery'; };
+  request: { esubrc: 'printerInfoQuery' };
   resolve: Fn;
   reject: Fn;
 }
@@ -21,12 +21,11 @@ interface Response {
   message?: string;
   requestId: string;
   taskId: string;
-  printers?: Array<{ printName?: string; defaultPrinter?: number; }>;
+  printers?: Array<{ printName?: string; defaultPrinter?: number }>;
 }
 
 export class AiKuCunPrint implements PrintAbstract {
-  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly statusCallback: (isSuccess: boolean) => void) {
-  }
+  constructor(private readonly socketUrl: string, private readonly openError: string, private readonly loopPrintCallback: () => void) {}
 
   private socket: WebSocket;
 
@@ -75,6 +74,7 @@ export class AiKuCunPrint implements PrintAbstract {
             }
 
             this.printTaskRequest.clear();
+            this.loopPrintCallback();
           };
 
           // 关闭
@@ -112,15 +112,16 @@ export class AiKuCunPrint implements PrintAbstract {
 
     if (response.code === '00000') {
       if (isPrint && requestIdItem) {
-        this.statusCallback(true);
+        // this.statusCallback(true);
         requestIdItem.resolve();
         this.printTaskRequest.delete(requestId);
       } else {
         const printers: string[] = (response.printers || []).map((item) => item.printName);
         this.printersTaskQueue.forEach((item) => item.resolve(printers));
         this.printersTaskQueue = [];
-        this.statusCallback(true);
+        // this.statusCallback(true);
       }
+      this.loopPrintCallback();
     } else {
       const error = response.message || '打印失败';
       message.error({
@@ -130,11 +131,12 @@ export class AiKuCunPrint implements PrintAbstract {
       if (isPrint && requestIdItem) {
         requestIdItem.reject(error);
         this.printTaskRequest.delete(requestId);
-        this.statusCallback(true);
+        // this.statusCallback(true);
       } else {
         this.printersTaskQueue.forEach((item) => item.reject(error));
         this.printersTaskQueue = [];
       }
+      this.loopPrintCallback();
     }
   };
 
@@ -151,14 +153,14 @@ export class AiKuCunPrint implements PrintAbstract {
         resolve,
         reject,
       });
-      this.connectWebsocket().then(()=>this.socket.send(JSON.stringify(request)));
+      this.connectWebsocket().then(() => this.socket.send(JSON.stringify(request)));
     });
   };
 
   /**
    * 打印
    */
-  public print = async({ contents }: Pick<CommonPrintParams, 'contents'>): Promise<any> => {
+  public print = async ({ contents }: Pick<CommonPrintParams, 'contents'>): Promise<any> => {
     validateData(contents);
     for (let i = 0; i < contents.length; i++) {
       const item = contents[i];
