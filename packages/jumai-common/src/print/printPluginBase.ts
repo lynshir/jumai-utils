@@ -45,8 +45,7 @@ export class PrintPluginBase implements PrintAbstract {
       this.socket.send(JSON.stringify(request));
     });
   }
-  // 如果打印机连接断开，设置标记，该标记用于等待一次完成的打印
-  public isBreak = false;
+
   public connectWebsocket = (): Promise<void> => {
     return new Promise((resolve, reject) => {
       const initWebsocket = () => {
@@ -94,8 +93,7 @@ export class PrintPluginBase implements PrintAbstract {
           console.log('打印机ready, ' + this.socketUrl);
           resolve();
         } else {
-          this.isBreak = true;
-          console.log('打印机还未连接成功，等待连接打印机', 'this.isBreak', this.isBreak);
+          console.log('打印机还未连接成功，等待连接打印机');
           setTimeout(() => {
             initWebsocket();
           }, 300);
@@ -116,6 +114,7 @@ export class PrintPluginBase implements PrintAbstract {
       return;
     }
     if (response.cmd === 'print') {
+      console.log('print', response.status);
       if (response.status === 'success') {
         const previewUrls: string[] = [].concat(response.previewURL || response?.previewImage).filter(Boolean);
         if (previewUrls.length) {
@@ -149,18 +148,17 @@ export class PrintPluginBase implements PrintAbstract {
       this.taskRequest.delete(response.requestID);
       this.loopPrintCallback();
     } else if (response.cmd === 'notifyPrintResult' || response.cmd === 'PrintResultNotify') {
-      console.log(response, '-', response.cmd, '-', response?.taskStatus, response.status, '-', '打印通知response');
-      const taskStatus = response?.taskStatus;
-      if (taskStatus === 'printed' || taskStatus === 'partPrinted') {
-        this.loopPrintCallback();
-      }
+      console.log(response?.cmd, '-', response?.taskStatus, response?.status, '-响应参数', response);
+      // const taskStatus = response?.taskStatus;
+      // if (taskStatus === 'printed' || taskStatus === 'partPrinted' || taskStatus === 'rendered') {
+      //   this.loopPrintCallback();
+      // }
+      this.loopPrintCallback();
       if (response.status === 'failed') {
         const msg = response?.printStatus?.[0]?.msg || response?.msg || '请求失败';
         message.error(msg);
-        this.loopPrintCallback();
       } else if (response.previewURL) {
         window.open(response.previewURL);
-        this.loopPrintCallback();
       }
     }
   };
