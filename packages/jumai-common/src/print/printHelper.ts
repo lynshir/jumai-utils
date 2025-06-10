@@ -323,24 +323,13 @@ class PrintHelper {
         const pageData = sliceData(params.contents, params.count);
 
         for (let i = 0; i < pageData.length; i++) {
-          this.printQueue.push({
-            state: params.state,
-            printData: {
-              preview: params.preview,
-              printer,
-              contents: pageData[i],
-              templateData: params.templateData,
-            },
+          await this.lodopPrintPlugin.print({
+            preview: params.preview,
+            printer,
+            contents: pageData[i],
+            templateData: params.templateData,
           });
-          // await this.lodopPrintPlugin.print({
-          //   preview: params.preview,
-          //   printer,
-          //   contents: pageData[i],
-          //   templateData: params.templateData,
-          // });
         }
-        // lodop打印条码不阻塞
-        this.onFirstPrint();
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.dw: {
