@@ -125,6 +125,7 @@ export class PrintPluginBase implements PrintAbstract {
           requestIDItem.resolve(previewUrls);
         }
       } else {
+        this.loopPrintCallback();
         const msg = response?.msg ?? '请求失败';
         message.error(msg);
 

@@ -155,7 +155,11 @@ class PrintHelper {
     // this.printingStatus = true;
     // this.retryCount = 0;
 
-    validateData(params.contents);
+    try {
+      validateData(params.contents);
+    } catch (error) {
+      this.isFirstPrint = true;
+    }
     params = {
       ...params,
 
@@ -167,7 +171,11 @@ class PrintHelper {
       case ENUM_PRINT_PLUGIN_TYPE.jdCloud:
       case ENUM_PRINT_PLUGIN_TYPE.jdErp: {
         const printData = formatJdData(params.contents, params.state, params.preview, printer);
-        validateData(printData);
+        try {
+          validateData(printData);
+        } catch (error) {
+          this.isFirstPrint = true;
+        }
         for (let i = 0; i < printData.length; i++) {
           // this.printQueue.push({ [params.state]: printData[i] });
           this.printQueue.push({ state: params.state, printData: printData[i] });
@@ -444,6 +452,7 @@ class PrintHelper {
         break;
       }
       default:
+        this.isFirstPrint = true;
         throw new Error('插件类型不存在,在外部被非法改掉');
     }
   };
@@ -509,6 +518,7 @@ class PrintHelper {
         break;
       }
       default:
+        this.isFirstPrint = true;
         throw new Error('插件类型不存在,在外部被非法改掉');
     }
   };
