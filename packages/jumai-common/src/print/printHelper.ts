@@ -49,6 +49,7 @@ class PrintHelper {
    * 如果printQueue.length为0，说明队列已打印完，重置第一次打印标记为true，否则下一次进来无法开始打印
    */
   public loopPrintQueue = async (): Promise<void> => {
+    console.log('this.printQueue.length', this.printQueue.length);
     if (this.printQueue.length === 0) {
       this.isFirstPrint = true;
       return;
