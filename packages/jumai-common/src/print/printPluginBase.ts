@@ -160,6 +160,9 @@ export class PrintPluginBase implements PrintAbstract {
       } else if (response.previewURL) {
         window.open(response.previewURL);
       }
+    } else {
+      console.log('进度兜底', response);
+      this.loopPrintCallback();
     }
   };
 
