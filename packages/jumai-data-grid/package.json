@@ -1,6 +1,6 @@
 {
   "name": "jumai-data-grid",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "license": "MIT",
   "description": "jumai表格组件库",
   "type": "module",
