@@ -35,14 +35,14 @@ declare global {
 class PrintHelper {
   private state: ENUM_PRINT_PLUGIN_TYPE = ENUM_PRINT_PLUGIN_TYPE.rookieCustomOld;
 
-  private printingStatus: boolean = false;
+  // private printingStatus: boolean = false;
   /**
    * 切换到lodop---兼容原来
    */
-  public readonly setPrintingStatus = (printFinished: boolean) => {
-    console.log('更新状态', printFinished);
-    this.printingStatus = !printFinished;
-  };
+  // public readonly setPrintingStatus = (printFinished: boolean) => {
+  //   console.log('更新状态', printFinished);
+  //   this.printingStatus = !printFinished;
+  // };
 
   /**
    * 第一次直接调用执行，之后通过各个打印组件打印完成的回调来调用
