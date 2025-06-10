@@ -331,7 +331,6 @@ class PrintHelper {
           // });
         }
         // lodop打印条码不阻塞
-        this.printingStatus = false;
         this.onFirstPrint();
         break;
       }
