@@ -169,8 +169,8 @@ export class PrintPluginBase implements PrintAbstract {
         window.open(response.previewURL);
       }
     } else {
-      console.log('进入兜底', response);
-      this.loopPrintCallback();
+      console.log('进入兜底--', response);
+      // this.loopPrintCallback();
     }
   };
 
