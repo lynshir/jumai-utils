@@ -485,7 +485,7 @@ class PrintHelper {
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.dw: {
-        await this.dwPrintPlugin.print(printData);
+        await this.dwPrintPlugin.print(printData, true);
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.xiaoHongShuErp:

@@ -34,6 +34,9 @@ export class PrintPluginBase implements PrintAbstract {
 
   private isConnected = false;
 
+  // 得物没有出纸回调
+  private isNext = false;
+
   private async sendToPrinter(request: RequestProtocol): Promise<any> {
     await this.connectWebsocket();
     return new Promise((resolve, reject) => {
@@ -124,6 +127,10 @@ export class PrintPluginBase implements PrintAbstract {
         if (requestIDItem) {
           requestIDItem.resolve(previewUrls);
         }
+        if (this.isNext) {
+          console.log('兼容得物没有出纸回调');
+          this.loopPrintCallback();
+        }
       } else {
         this.loopPrintCallback();
         const msg = response?.msg ?? '请求失败';
@@ -162,7 +169,7 @@ export class PrintPluginBase implements PrintAbstract {
         window.open(response.previewURL);
       }
     } else {
-      console.log('进度兜底', response);
+      console.log('进入兜底', response);
       this.loopPrintCallback();
     }
   };
@@ -191,8 +198,9 @@ export class PrintPluginBase implements PrintAbstract {
     }: // 得物预览和其它有所区别
     // eslint-disable-next-line require-await
     CommonPrintParams & { cmd?: 'preview' },
-    isDelay = false,
+    isNext = false,
   ): Promise<any> => {
+    this.isNext = isNext;
     validateData(contents);
     return this.sendToPrinter({
       cmd: cmd || 'print',
