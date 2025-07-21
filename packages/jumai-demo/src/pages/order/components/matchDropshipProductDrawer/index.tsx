@@ -122,7 +122,7 @@ export default observer((props: { store: Store; }) => {
                 <Input
                   allowClear
                   className={styles.input}
-                  placeholder="衫海精款式货号"
+                  placeholder="汇智衣通款式货号"
                 />
               </Form.Item>
               <Form.Item>

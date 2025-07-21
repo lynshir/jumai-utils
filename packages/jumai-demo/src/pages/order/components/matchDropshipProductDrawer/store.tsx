@@ -89,7 +89,7 @@ export default class MatchDropshipProductStore {
         key: 'vendorShopName',
       },
       {
-        name: '衫海精商品名称',
+        name: '汇智衣通商品名称',
         key: 'goodsName',
       },
       {
