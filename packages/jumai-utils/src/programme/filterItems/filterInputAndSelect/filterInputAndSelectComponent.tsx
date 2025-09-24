@@ -11,7 +11,7 @@ import type { FilterInputAndSelect } from './filterInputAndSelect';
 export class FilterInputAndSelectComponent extends React.Component<{ store: FilterInputAndSelect; }> {
   public handlePressEnter: React.KeyboardEventHandler = _.throttle((event) => {
     if (!this.props.store._isLoading) {
-      if (typeof this.props.store.onPressEnter === 'function') {
+      if (typeof this.props.store.onPressEnter === 'function' && event.key === 'Enter') {
         this.props.store.onPressEnter();
       }
     }
@@ -57,7 +57,7 @@ export class FilterInputAndSelectComponent extends React.Component<{ store: Filt
           bordered={false}
           disabled={disabled}
           onChange={(event) => handleInputChange(event.target.value)}
-          onPressEnter={this.handlePressEnter}
+          onKeyUp={this.handlePressEnter}
           placeholder={placeholder}
           ref={inputRef}
           suffix={isMultipleSearch ? (

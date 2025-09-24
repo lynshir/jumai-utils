@@ -11,7 +11,7 @@ import type { FilterRadio } from './filterRadio';
 export class FilterRadioComponent extends React.Component<{ store: FilterRadio; }> {
   public handlePressEnter: React.KeyboardEventHandler = _.throttle((event) => {
     if (!this.props.store._isLoading) {
-      if (typeof this.props.store.onPressEnter === 'function') {
+      if (typeof this.props.store.onPressEnter === 'function' && event.key === 'Enter') {
         this.props.store.onPressEnter();
       }
     }
@@ -53,7 +53,7 @@ export class FilterRadioComponent extends React.Component<{ store: FilterRadio; 
                     <Input
                       onChange={handleInputChange}
                       onClick={handleInputClick}
-                      onPressEnter={this.handlePressEnter}
+                      onKeyUp={this.handlePressEnter}
                       placeholder={placeholder}
                       ref={inputRef}
                       size="small"

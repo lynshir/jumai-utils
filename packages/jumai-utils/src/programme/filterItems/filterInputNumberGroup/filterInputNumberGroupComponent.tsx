@@ -10,7 +10,7 @@ import type { FilterInputNumberGroup } from './filterInputNumberGroup';
 export class FilterInputNumberGroupComponent extends React.Component<{ store: FilterInputNumberGroup; }> {
   public handlePressEnter: React.KeyboardEventHandler = _.throttle((event) => {
     if (!this.props.store._isLoading) {
-      if (typeof this.props.store.onPressEnter === 'function') {
+      if (typeof this.props.store.onPressEnter === 'function' && event.key === 'Enter') {
         this.props.store.onPressEnter();
       }
     }
@@ -74,7 +74,7 @@ export class FilterInputNumberGroupComponent extends React.Component<{ store: Fi
             disabled={disabled}
             max={Number.MAX_SAFE_INTEGER}
             onChange={onMinChange}
-            onPressEnter={this.handlePressEnter}
+            onKeyUp={this.handlePressEnter}
             placeholder={placeholder[0]}
             step={step}
             value={value[0]}
@@ -85,7 +85,7 @@ export class FilterInputNumberGroupComponent extends React.Component<{ store: Fi
             disabled={disabled}
             max={Number.MAX_SAFE_INTEGER}
             onChange={onMaxChange}
-            onPressEnter={this.handlePressEnter}
+            onKeyUp={this.handlePressEnter}
             placeholder={placeholder[1]}
             step={step}
             value={value[1]}

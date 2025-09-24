@@ -10,7 +10,7 @@ import type { FilterInputOrSelect } from './filterInputOrSelect';
 export class FilterInputOrSelectComponent extends React.Component<{ store: FilterInputOrSelect; }> {
   public handlePressEnter: React.KeyboardEventHandler = _.throttle((event) => {
     if (!this.props.store._isLoading) {
-      if (typeof this.props.store.onPressEnter === 'function') {
+      if (typeof this.props.store.onPressEnter === 'function' && event.key === 'Enter') {
         this.props.store.onPressEnter();
       }
     }
@@ -41,7 +41,7 @@ export class FilterInputOrSelectComponent extends React.Component<{ store: Filte
             bordered={false}
             disabled={disabled}
             onChange={handleInputChange}
-            onPressEnter={this.handlePressEnter}
+            onKeyUp={this.handlePressEnter}
             placeholder={placeholder}
             value={value}
           />
