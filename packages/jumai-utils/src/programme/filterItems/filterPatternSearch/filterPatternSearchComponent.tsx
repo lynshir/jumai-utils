@@ -11,7 +11,7 @@ import type { FilterPatternSearch } from './filterPatternSearch';
 export class FilterPatternSearchComponent extends React.Component<{ store: FilterPatternSearch; }> {
   public handlePressEnter: React.KeyboardEventHandler = _.throttle((event) => {
     if (!this.props.store._isLoading) {
-      if (typeof this.props.store.onPressEnter === 'function') {
+      if (typeof this.props.store.onPressEnter === 'function' && event.key === 'Enter') {
         this.props.store.onPressEnter();
       }
     }
@@ -55,7 +55,7 @@ export class FilterPatternSearchComponent extends React.Component<{ store: Filte
           allowClear={allowClear}
           disabled={inputDisabled}
           onChange={(event) => handleInputChange(event.target.value)}
-          onPressEnter={this.handlePressEnter}
+          onKeyUp={this.handlePressEnter}
           placeholder={inputPlaceholder}
           ref={inputRef}
           suffix={isMultipleSearch ? (

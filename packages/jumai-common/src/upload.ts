@@ -346,7 +346,7 @@ const multipartUploadObs = async(hwObsPolicy: HuaWeiCloudInfoVo, file: UploadFil
     await obsClient.uploadFile({
       Bucket: bucketName,
       Key: `${dir}/${name}`,
-      SourceFile: file.blob,
+      SourceFile: file.blob || file,
       PartSize: 1024 * 1024,
       ProgressCallback(transferredAmount: number, totalAmount: number, totalSeconds: number) {
         const p = transferredAmount / totalAmount;

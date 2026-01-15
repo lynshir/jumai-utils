@@ -36,9 +36,7 @@ class PrintHelper {
   private state: ENUM_PRINT_PLUGIN_TYPE = ENUM_PRINT_PLUGIN_TYPE.rookieCustomOld;
 
   // private printingStatus: boolean = false;
-  /**
-   * 切换到lodop---兼容原来
-   */
+
   // public readonly setPrintingStatus = (printFinished: boolean) => {
   //   console.log('更新状态', printFinished);
   //   this.printingStatus = !printFinished;

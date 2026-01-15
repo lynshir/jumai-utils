@@ -86,7 +86,7 @@ export class ProgrammeComponent extends React.Component<ProgrammeProps> {
             collapsible
             onCollapse={handleCollapsed}
             theme="light"
-            trigger={<i className={collapsed ? 'icon-sq' : 'icon-zk'}/>}
+            trigger={<i className={collapsed ? 'icon-sq' : 'icon-zk'} />}
             width="300"
           >
             <div
@@ -94,21 +94,21 @@ export class ProgrammeComponent extends React.Component<ProgrammeProps> {
               onScroll={handleScroll}
               ref={scrollContainerRef}
             >
-              <FilterItemsComponent programme={store}/>
+              <FilterItemsComponent programme={store} />
             </div>
-            <FilterItemsScroll programme={store}/>
-            <Footer programme={store}/>
+            <FilterItemsScroll programme={store} />
+            <Footer programme={store} />
           </Layout.Sider>
           <Layout.Content>
             {summaryStatistic}
-            <ProgrammeList programme={store}/>
+            <ProgrammeList programme={store} />
             <div className={styles.tableWrapper}>
-              {_.isEmpty(customTableRender) ? <MainSubStructure store={gridModel}/> : CustomTableRender}
+              {_.isEmpty(customTableRender) ? <MainSubStructure store={gridModel} /> : CustomTableRender}
             </div>
           </Layout.Content>
         </Layout>
-        <FilterItemsSetting filterItemsSettingStore={filterItemsSettingStore}/>
-        <ProgrammeListSetting programmeListSettingStore={programmeListSettingStore}/>
+        <FilterItemsSetting filterItemsSettingStore={filterItemsSettingStore} />
+        <ProgrammeListSetting programmeListSettingStore={programmeListSettingStore} />
       </>
     );
   }
@@ -128,7 +128,7 @@ const Footer = observer(({
   return (
     <div className={styles.footer}>
       <a onClick={filterItemsSettingStore.handleOpen}>
-        <i className="icon-btn_sz"/>
+        <i className="icon-btn_sz" />
       </a>
       <Space size={4}>
         {
@@ -161,6 +161,11 @@ const Footer = observer(({
         <Button
           loading={isSearch}
           onClick={handleSearch}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+            }
+          }}
           type="primary"
         >
           查询
@@ -252,7 +257,7 @@ const ProgrammeList = observer(({
           onClick={programmeListSettingStore.handleOpen}
           type="text"
         >
-          <i className="icon-sz01"/>
+          <i className="icon-sz01" />
         </Button>
         <RenderByCondition show={showProgrammeCount}>
           <Button
@@ -260,11 +265,11 @@ const ProgrammeList = observer(({
             onClick={getProgrammeCount}
             type="text"
           >
-            <i className="icon-cxsc"/>
+            <i className="icon-cxsc" />
           </Button>
         </RenderByCondition>
       </div>
-      <div className={styles.emptyBorder}/>
+      <div className={styles.emptyBorder} />
     </div>
   );
 });
@@ -305,7 +310,7 @@ const FilterItemsScroll = observer(({
   );
 });
 
-const FilterItemsComponent = observer(({ programme: { filterItems: { actualData }}}: { programme: Programme; }) => {
+const FilterItemsComponent = observer(({ programme: { filterItems: { actualData } } }: { programme: Programme; }) => {
   return (
     <div className={styles.filterItemMainContainer}>
       {
