@@ -63,3 +63,13 @@ npm config set registry https://registry.npmjs.org/
 ```shell
 npm run release
 ```
+
+### 权限问题
+```
+export NPM_TOKEN="你刚生成的token"
+npm whoami
+pnpm -r publish --dry-run
+npm run release
+```
+在根目录的.npmrc和data-grid的.npmrc中都要添加
+//registry.npmjs.org/:_authToken=网站后台生成的token
