@@ -1,6 +1,6 @@
 import { message } from 'antd';
-import type { PrintAbstract, CommonPrintParams } from './types';
-import { handleSocketDisconnectNotification, validateData } from './utils';
+import type { PrintAbstract  } from './types';
+import { handleSocketDisconnectNotification, } from './utils';
 
 type Fn = (...args: any[]) => any;
 
