@@ -1,6 +1,6 @@
 {
   "name": "jumai-tool-cli",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "license": "MIT",
   "main": "dist/index.js",
   "files": [
