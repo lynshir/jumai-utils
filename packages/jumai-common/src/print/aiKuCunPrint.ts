@@ -122,6 +122,7 @@ export class AiKuCunPrint implements PrintAbstract {
         // this.statusCallback(true);
       }
       this.loopPrintCallback();
+      // TODO: 到处理code !== '00000' && code !=='200', 既不等于200也不等于00000的情况， 才能当做当做失败处理， 目前没有多打印组件混合用，暂时只用00000。
     } else {
       const error = response.message || '打印失败';
       message.error({
@@ -160,13 +161,7 @@ export class AiKuCunPrint implements PrintAbstract {
   /**
    * 打印
    */
-  public print = async ({ contents }: Pick<CommonPrintParams, 'contents'>): Promise<any> => {
-    validateData(contents);
-    for (let i = 0; i < contents.length; i++) {
-      const item = contents[i];
-      if (item?.printMetaData?.printData) {
-        await this.sendToPrinter(JSON.parse(item.printMetaData.printData));
-      }
-    }
+  public print = async ({ contents }): Promise<any> => {
+    await this.sendToPrinter(contents);
   };
 }

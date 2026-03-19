@@ -428,12 +428,25 @@ class PrintHelper {
         break;
       }
       case ENUM_PRINT_PLUGIN_TYPE.aiKuCun: {
-        this.printQueue.push({
-          state: params.state,
-          printData: {
-            contents: params.contents,
-          },
-        });
+        const contents = params.contents;
+        for (let i = 0; i < contents.length; i++) {
+          const item = contents[i];
+          if (item?.printMetaData?.printData) {
+            this.printQueue.push({
+              state: params.state,
+              printData: {
+                preview: params.preview,
+                contents: JSON.parse(item.printMetaData.printData),
+              },
+            });
+          }
+        }
+        // this.printQueue.push({
+        //   state: params.state,
+        //   printData: {
+        //     contents: params.contents,
+        //   },
+        // });
         // await this.aiKuCunPrintPlugin.print({ contents: params.contents });
         this.onFirstPrint();
         break;
