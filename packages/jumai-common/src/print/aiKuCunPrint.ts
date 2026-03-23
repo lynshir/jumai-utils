@@ -109,8 +109,8 @@ export class AiKuCunPrint implements PrintAbstract {
     const isPrint = response.requestId || response.taskId;
     const requestId = response.requestId;
     const requestIdItem = this.printTaskRequest.get(requestId);
-
-    if (response.code === '00000') {
+    // 出纸成功
+    if (response.code === '200') {
       if (isPrint && requestIdItem) {
         // this.statusCallback(true);
         requestIdItem.resolve();
@@ -123,7 +123,7 @@ export class AiKuCunPrint implements PrintAbstract {
       }
       this.loopPrintCallback();
       // TODO: 到处理code !== '00000' && code !=='200', 既不等于200也不等于00000的情况， 才能当做当做失败处理， 目前没有多打印组件混合用，暂时只用00000。
-    } else {
+    } else if (response.code !== '200' && response.code !== '00000') {
       const error = response.message || '打印失败';
       message.error({
         key: error,
