@@ -193,7 +193,7 @@ class PrintWayBill {
    */
   public readonly executePrint = async (params: PrintWayBillParams, printData: PrintData[]): Promise<void> => {
     validateData(printData);
-
+    console.log('本次打印数据',printData,new Date().toLocaleTimeString())
     for (let i = 0; i < printData.length; i++) {
       const waybillData = printData[i].waybillData;
       const tempData = waybillData.tempData;

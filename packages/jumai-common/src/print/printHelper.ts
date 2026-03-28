@@ -429,6 +429,7 @@ class PrintHelper {
       }
       case ENUM_PRINT_PLUGIN_TYPE.aiKuCun: {
         const contents = params.contents;
+        console.log('本次打印数据userData',contents,new Date().toLocaleTimeString())
         for (let i = 0; i < contents.length; i++) {
           const item = contents[i];
           if (item?.printMetaData?.printData) {
@@ -439,6 +440,8 @@ class PrintHelper {
                 contents: JSON.parse(item.printMetaData.printData),
               },
             });
+          }else{
+            console.log('本次打印数据userData没有printMetaData.printData',item,new Date().toLocaleTimeString())
           }
         }
         // this.printQueue.push({
