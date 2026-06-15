@@ -28,8 +28,8 @@
     "@types/react-router": "^5.1.8",
     "@types/react-router-dom": "^5.1.6",
     "cross-env": "^7.0.3",
-    "jumai-bundler-cli": "2.2.8",
-    "jumai-code-style": "2.2.8",
+    "jumai-bundler-cli": "0.0.0-rc.1",
+    "jumai-code-style": "0.0.0-rc.1",
     "mockjs": "^1.1.0",
     "typescript": "4.2.4"
   },
