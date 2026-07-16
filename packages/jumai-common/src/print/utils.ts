@@ -620,9 +620,34 @@ function readBlobAsText(blob: Blob): Promise<string> {
       resolve(event.target.result as string);
     };
     fileReader.onerror = function () {
-      reject();
+      reject(new Error('读取文件内容失败'));
     };
   });
+}
+
+export function formatRequestError(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    if (error.code === 'ECONNABORTED' || error.message === '请求超时') {
+      return '请求超时(15s)';
+    }
+    if (error.response) {
+      return `HTTP ${error.response.status}`;
+    }
+    if (error.message) {
+      return error.message;
+    }
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+
+export function getRequestErrorStatus(error: unknown): number | undefined {
+  if (axios.isAxiosError(error) && error.response) {
+    return error.response.status;
+  }
+  return undefined;
 }
 
 export async function readRemoteFile(url: string): Promise<string> {
