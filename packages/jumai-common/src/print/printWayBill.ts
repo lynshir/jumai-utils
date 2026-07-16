@@ -353,7 +353,7 @@ class PrintWayBill {
 }
 
 /** 单次并发请求数，过高会导致浏览器报 ERR_INSUFFICIENT_RESOURCES */
-const REMOTE_FETCH_CONCURRENCY = 20;
+const REMOTE_FETCH_CONCURRENCY = 200;
 /** 同一 URL 最大重试次数 */
 const REMOTE_FETCH_RETRY_COUNT = 3;
 /** 重试基础间隔(ms)，按 300/600/1200 指数退避 */
