@@ -4,7 +4,7 @@ import { getCustomPrintParam } from './customPrint';
 import { printHelper } from './printHelper';
 import type { BasePrintParams, TemplateData } from './types';
 import { ENUM_PRINT_PLUGIN_TYPE, ENUM_WAY_BILL_TYPE } from './types';
-import { readRemoteFile, sliceData, validateData } from './utils';
+import { formatRequestError, getRequestErrorStatus, readRemoteFile, sliceData, validateData } from './utils';
 
 interface UserDataItem {
   remotePrintUrls?: string | string[];
@@ -193,7 +193,7 @@ class PrintWayBill {
    */
   public readonly executePrint = async (params: PrintWayBillParams, printData: PrintData[]): Promise<void> => {
     validateData(printData);
-
+    console.log('本次打印数据',printData,new Date().toLocaleTimeString())
     for (let i = 0; i < printData.length; i++) {
       const waybillData = printData[i].waybillData;
       const tempData = waybillData.tempData;
@@ -352,20 +352,114 @@ class PrintWayBill {
   };
 }
 
-async function fetchRemoteData(item: UserDataItem): Promise<string> {
-  const urlData = [].concat(item.remotePrintUrls);
+/** 单次并发请求数，过高会导致浏览器报 ERR_INSUFFICIENT_RESOURCES */
+const REMOTE_FETCH_CONCURRENCY = 200;
+/** 同一 URL 最大重试次数 */
+const REMOTE_FETCH_RETRY_COUNT = 3;
+/** 重试基础间隔(ms)，按 300/600/1200 指数退避 */
+const REMOTE_FETCH_RETRY_BASE_DELAY = 300;
+/** 批次间间隔(ms)，减轻 CDN/OBS 突发压力 */
+const REMOTE_FETCH_BATCH_DELAY = 100;
 
-  // 数据存在多个cdn上
+interface RemoteFetchAttempt {
+  url: string;
+  error: string;
+  status?: number;
+  durationMs: number;
+  retryIndex: number;
+}
+
+class RemoteFetchError extends Error {
+  readonly index: number;
+  readonly attempts: RemoteFetchAttempt[];
+  readonly urls: string[];
+
+  constructor(index: number, attempts: RemoteFetchAttempt[], urls: string[]) {
+    super(`第 ${index + 1} 条固定模板获取失败`);
+    this.name = 'RemoteFetchError';
+    this.index = index;
+    this.attempts = attempts;
+    this.urls = urls;
+  }
+}
+
+function sleep(delay: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay);
+  });
+}
+
+function formatRemoteFetchErrorDetail(error: RemoteFetchError): string {
+  const attemptLines = error.attempts
+    .map((attempt) => {
+      const statusText = attempt.status ? ` HTTP ${attempt.status}` : '';
+      const retryText = attempt.retryIndex > 0 ? ` 第${attempt.retryIndex + 1}次` : '';
+      return `  - ${attempt.url}${retryText} → ${attempt.error}${statusText} (${attempt.durationMs}ms)`;
+    })
+    .join('\n');
+
+  return `第 ${error.index + 1} 条（共尝试 ${error.urls.length} 个地址）:\n${attemptLines}`;
+}
+
+function buildRemoteFetchFailureMessage(failures: RemoteFetchError[], total: number): string {
+  const preview = failures.slice(0, 5).map(formatRemoteFetchErrorDetail).join('\n\n');
+  const more = failures.length > 5 ? `\n\n...还有 ${failures.length - 5} 条失败未展示` : '';
+
+  return `获取固定模板数据失败：${failures.length}/${total} 条\n\n${preview}${more}`;
+}
+
+async function fetchRemoteData(item: UserDataItem, index: number): Promise<string> {
+  const urlData = ([] as string[]).concat(item.remotePrintUrls || []).filter(Boolean);
+
+  if (!urlData.length) {
+    throw new RemoteFetchError(index, [{ url: '(空)', error: 'remotePrintUrls 为空', durationMs: 0, retryIndex: 0 }], []);
+  }
+
+  const attempts: RemoteFetchAttempt[] = [];
+
+  // 数据存在多个 cdn 上，同一地址失败后会重试再切换下一个
   for (let i = 0; i < urlData.length; i++) {
-    try {
-      const text = await readRemoteFile(urlData[i]);
-      return text;
-    } catch (e) {
-      console.log(e);
+    const url = urlData[i];
+
+    for (let retryIndex = 0; retryIndex < REMOTE_FETCH_RETRY_COUNT; retryIndex++) {
+      if (retryIndex > 0) {
+        await sleep(REMOTE_FETCH_RETRY_BASE_DELAY * 2 ** (retryIndex - 1));
+      }
+
+      const start = Date.now();
+      try {
+        const text = await readRemoteFile(url);
+        return text;
+      } catch (e) {
+        attempts.push({
+          url,
+          error: formatRequestError(e),
+          status: getRequestErrorStatus(e),
+          durationMs: Date.now() - start,
+          retryIndex,
+        });
+        console.warn(`固定模板获取失败 index=${index + 1}, url=${url}, retry=${retryIndex + 1}`, e);
+      }
     }
   }
 
-  throw new Error('获取远端数据失败');
+  throw new RemoteFetchError(index, attempts, urlData);
+}
+
+function notifyRemoteFetchFailure(failures: RemoteFetchError[], total: number): void {
+  const errorMessage = buildRemoteFetchFailureMessage(failures, total);
+
+  console.error('获取固定模板数据失败', failures);
+  message.error({
+    key: 'remote-fetch-fail',
+    content: `获取固定模板数据失败：${failures.length}/${total} 条，详见弹窗`,
+    duration: 8,
+  });
+  Modal.error({
+    title: '获取固定模板数据失败',
+    content: errorMessage,
+    width: 720,
+  });
 }
 
 export async function handleWayBillRemotePrintUrl(userData: UserDataItem[]): Promise<UserDataItem[]> {
@@ -384,35 +478,68 @@ export async function handleWayBillRemotePrintUrl(userData: UserDataItem[]): Pro
     }
   });
 
-  // 此处远端的地址需要支持http2,且一次并发请求不能太多,太多浏览器会直接报错
-  const pageFilterNeedFetchData = sliceData(filterNeedFetchData, 500);
-  console.log(`${new Date().toLocaleTimeString()},开始获取固定模板数据`);
+  if (!filterNeedFetchData.length) {
+    return userData;
+  }
+
+  // 远端的地址需要支持 http2，且一次并发请求不能太多，太多浏览器会直接报错
+  const pageFilterNeedFetchData = sliceData(filterNeedFetchData, REMOTE_FETCH_CONCURRENCY);
+  const total = filterNeedFetchData.length;
+  const failures: RemoteFetchError[] = [];
+
+  console.log(`${new Date().toLocaleTimeString()},开始获取固定模板数据,共 ${total} 条,并发 ${REMOTE_FETCH_CONCURRENCY}`);
+
   for (let i = 0; i < pageFilterNeedFetchData.length; i++) {
-    const promises: Array<Promise<{ index: number; printData: string }>> = pageFilterNeedFetchData[i].map((item) =>
-      fetchRemoteData(item.data)
-        .then((printData) => ({
+    const batch = pageFilterNeedFetchData[i];
+    const results = await Promise.allSettled(
+      batch.map((item) =>
+        fetchRemoteData(item.data, item.index).then((printData) => ({
           index: item.index,
           printData,
-        }))
-        .catch((info) => {
-          const error = '获取固定模板数据失败';
-          console.error(info);
-          message.error({
-            key: error,
-            content: error,
-          });
-          return Promise.reject(info);
-        }),
+        })),
+      ),
     );
 
-    const data = await Promise.all(promises);
+    results.forEach((result, resultIndex) => {
+      if (result.status === 'fulfilled') {
+        userData[result.value.index]._remotePrintData = result.value.printData;
+        return;
+      }
 
-    data.forEach((item) => {
-      userData[item.index]._remotePrintData = item.printData;
+      const reason = result.reason;
+      if (reason instanceof RemoteFetchError) {
+        failures.push(reason);
+        return;
+      }
+
+      failures.push(
+        new RemoteFetchError(batch[resultIndex].index, [
+          {
+            url: '(未知)',
+            error: formatRequestError(reason),
+            status: getRequestErrorStatus(reason),
+            durationMs: 0,
+            retryIndex: 0,
+          },
+        ], []),
+      );
     });
-    console.log(`${new Date().toLocaleTimeString()},获取固定模板数据成功,数据为--,`,data);
 
+    console.log(
+      `${new Date().toLocaleTimeString()},固定模板批次 ${i + 1}/${pageFilterNeedFetchData.length} 完成,本批 ${batch.length} 条`,
+    );
+
+    if (i < pageFilterNeedFetchData.length - 1) {
+      await sleep(REMOTE_FETCH_BATCH_DELAY);
+    }
   }
+
+  if (failures.length) {
+    notifyRemoteFetchFailure(failures, total);
+    throw new Error(buildRemoteFetchFailureMessage(failures, total));
+  }
+
+  console.log(`${new Date().toLocaleTimeString()},获取固定模板数据成功,共 ${total} 条`);
 
   return userData;
 }

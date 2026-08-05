@@ -1,6 +1,6 @@
 import { message } from 'antd';
-import type { PrintAbstract, CommonPrintParams } from './types';
-import { handleSocketDisconnectNotification, validateData } from './utils';
+import type { PrintAbstract  } from './types';
+import { handleSocketDisconnectNotification, } from './utils';
 
 type Fn = (...args: any[]) => any;
 
@@ -16,13 +16,33 @@ interface PrinterQueueItem {
   reject: Fn;
 }
 
-interface Response {
+interface PushBackMessage {
+  logisticsNo?: string;
+  requestId?: string;
+  taskId?: string;
+  message?: string;
+}
+
+/** 爱库存控件回包：requestId/taskId 在 pushBackMessage 内，不在顶层 */
+interface AiKuCunWsPayload {
   code?: string;
   message?: string;
-  requestId: string;
-  taskId: string;
+  pushBackMessage?: PushBackMessage;
+  requestId?: string;
+  taskId?: string;
   printers?: Array<{ printName?: string; defaultPrinter?: number }>;
 }
+
+function normalizeAiKuCunIds(payload: AiKuCunWsPayload): { requestId?: string; taskId?: string } {
+  const inner = payload.pushBackMessage;
+  return {
+    requestId: inner?.requestId ?? payload.requestId,
+    taskId: inner?.taskId ?? payload.taskId,
+  };
+}
+
+/** 单条打印完成后延迟再拉下一条，避免控件/驱动跟不上连发丢任务（可按现场调大） */
+const AI_KUCUN_PRINT_JOB_INTERVAL_MS = 220;
 
 export class AiKuCunPrint implements PrintAbstract {
   constructor(private readonly socketUrl: string, private readonly openError: string, private readonly loopPrintCallback: () => void) {}
@@ -33,10 +53,20 @@ export class AiKuCunPrint implements PrintAbstract {
 
   private isConnected = false;
 
+  /** 仅在有打印任务结束（成功/失败）时延迟，避免与上一条间隔过短；查打印机列表仍立即推进 */
+  private scheduleLoopPrintCallback = (afterPrintJob: boolean) => {
+    if (afterPrintJob) {
+      setTimeout(() => this.loopPrintCallback(), AI_KUCUN_PRINT_JOB_INTERVAL_MS);
+    } else {
+      this.loopPrintCallback();
+    }
+  };
+
   private async sendToPrinter(request: PrintMapItem['request']): Promise<any> {
     await this.connectWebsocket();
     return new Promise((resolve, reject) => {
-      this.printTaskRequest.set(request.requestId, {
+      const mapKey = String(request.requestId);
+      this.printTaskRequest.set(mapKey, {
         request,
         resolve,
         reject,
@@ -105,38 +135,52 @@ export class AiKuCunPrint implements PrintAbstract {
   };
 
   private onmessage = (event: MessageEvent) => {
-    const response: Response = JSON.parse(event.data);
-    const isPrint = response.requestId || response.taskId;
-    const requestId = response.requestId;
-    const requestIdItem = this.printTaskRequest.get(requestId);
+    let response: AiKuCunWsPayload;
+    try {
+      response = JSON.parse(event.data) as AiKuCunWsPayload;
+    } catch {
+      return;
+    }
 
-    if (response.code === '00000') {
-      if (isPrint && requestIdItem) {
-        // this.statusCallback(true);
+    const { requestId, taskId } = normalizeAiKuCunIds(response);
+    const lookupKey = requestId ?? taskId;
+    const requestIdItem = lookupKey != null ? this.printTaskRequest.get(String(lookupKey)) : undefined;
+    const code = response.code != null ? String(response.code) : '';
+
+    // 中间态：任务已受理但未出纸完成，不 resolve、不推进打印队列
+    if (code === '00000') {
+      return;
+    }
+
+    if (code === '200') {
+      if (requestIdItem && lookupKey != null) {
         requestIdItem.resolve();
-        this.printTaskRequest.delete(requestId);
+        this.printTaskRequest.delete(String(lookupKey));
+        this.scheduleLoopPrintCallback(true);
       } else {
         const printers: string[] = (response.printers || []).map((item) => item.printName);
         this.printersTaskQueue.forEach((item) => item.resolve(printers));
         this.printersTaskQueue = [];
-        // this.statusCallback(true);
+        this.scheduleLoopPrintCallback(false);
       }
-      this.loopPrintCallback();
-    } else {
+      return;
+    }
+
+    if (code !== '200' && code !== '00000') {
       const error = response.message || '打印失败';
       message.error({
         key: error,
         content: error,
       });
-      if (isPrint && requestIdItem) {
+      if (requestIdItem && lookupKey != null) {
         requestIdItem.reject(error);
-        this.printTaskRequest.delete(requestId);
-        // this.statusCallback(true);
+        this.printTaskRequest.delete(String(lookupKey));
+        this.scheduleLoopPrintCallback(true);
       } else {
         this.printersTaskQueue.forEach((item) => item.reject(error));
         this.printersTaskQueue = [];
+        this.scheduleLoopPrintCallback(false);
       }
-      this.loopPrintCallback();
     }
   };
 
@@ -160,13 +204,7 @@ export class AiKuCunPrint implements PrintAbstract {
   /**
    * 打印
    */
-  public print = async ({ contents }: Pick<CommonPrintParams, 'contents'>): Promise<any> => {
-    validateData(contents);
-    for (let i = 0; i < contents.length; i++) {
-      const item = contents[i];
-      if (item?.printMetaData?.printData) {
-        await this.sendToPrinter(JSON.parse(item.printMetaData.printData));
-      }
-    }
+  public print = async ({ contents }): Promise<any> => {
+    await this.sendToPrinter(contents);
   };
 }

@@ -14,6 +14,7 @@ export * from './voice';
 export * from './buyerNick';
 export * from './permission';
 export * from './upload';
+// export * from './uploadPresigned';
 export * from './slideVerify';
 
 export interface Egenie {

@@ -67,7 +67,11 @@ export const requestSingleton: { getInstance: (options?: AxiosRequestConfig) => 
           });
           if (process.env.NODE_ENV === 'production') {
             if (typeof top !== 'undefined') {
-              top.location.href = info.data.data || '/login';
+              if(top.location.href.includes('/jumai-erp-home/ysHome')){
+                top.location.href = 'https://www.cjysl.com/jumai-ts-vogue/login'
+              } else {
+                top.location.href = info.data.data || '/login';
+              }
             } else {
               window.location.href = info.data.data || '/login';
             }
