@@ -1,25 +1,17 @@
 /**
- * 基于预签名 URL 的文件上传/下载工具。
+ * 基于预签名 URL 的自建桶上传工具（数据备份）。
+ *
+ * 主上传走华为云 upload.ts，返回业务使用的 URL；
+ * 本模块在主上传成功后异步备份一份到自建桶，不向外返回 URL，仅打日志。
  *
  * 上传流程：
  * 1. 调用后端 getPresignedUrl 接口，传入 UploadData + fileName，获取 presignedUrl 与 obsUrl
  * 2. 前端对 presignedUrl 发起 PUT 请求，将文件直传至自建对象存储
- * 3. 业务侧使用 obsUrl 作为文件最终访问地址
- *
- * 对外暴露的方法名与入参与 upload.ts 保持一致，便于业务侧无缝切换。
+ * 3. 备份成功后 console.log 自建桶 obsUrl（不作为业务返回值）
  */
-import { message } from 'antd';
 import type { BaseData, BatchReportData } from './request';
 import { request } from './request';
-import { getUUID } from './print';
-
-export type {
-  UploadData,
-  UploadExtendParam,
-  UploadFileItem,
-} from './upload';
-
-import type { UploadData, UploadExtendParam, UploadFileItem } from './upload';
+import type { UploadData, UploadExtendParam } from './upload';
 
 /** 后端 getPresignedUrl 接口返回的数据结构 */
 interface PresignedUrlData {
@@ -57,14 +49,6 @@ function extractPresignedUrlData(res: unknown): PresignedUrlData {
   }
 
   throw '上传失败！请联系管理员或重新上传';
-}
-
-/**
- * 生成上传用的唯一文件名，规则与原 upload.ts 一致。
- * @param fileName 原始文件名
- */
-function getFileName(fileName: string): string {
-  return `${getUUID()}_${fileName.replace(/,|，| |/g, '')}`;
 }
 
 /**
@@ -187,173 +171,45 @@ async function putUpload(
 }
 
 /**
- * 单文件预签名上传的完整流程：取预签名 → PUT 上传 → 返回 obsUrl。
+ * 将文件备份上传至自建桶（预签名 PUT）。
+ * 使用与主上传相同的 fileName，便于对照；失败只打日志，不影响主流程。
  *
- * @param data 上传校验参数
- * @param file 待上传文件
- * @param rawFileName 原始文件名（会经 getFileName 处理后传给后端）
- * @param extendParam 额外参数
- * @param options 生命周期回调：beforeUpload / onProgress / afterUpload
- * @returns 上传成功后的 obsUrl
+ * @param data 上传校验参数（与主上传一致，isAnon 走 extendParam）
+ * @param file 待备份文件
+ * @param fileName 已与主上传对齐的唯一文件名（勿再二次 getFileName）
+ * @param extendParam 额外参数，主要用于 isAnon
  */
-const uploadByPresignedUrl = async (
+export const backupUploadToSelfHosted = async (
   data: UploadData,
   file: Blob | File,
-  rawFileName: string,
+  fileName: string,
   extendParam?: UploadExtendParam,
-  options?: {
-    onProgress?: (progress: number) => void;
-    beforeUpload?: () => void;
-    afterUpload?: (obsUrl: string) => void;
-  },
-): Promise<string> => {
-  const fileName = getFileName(rawFileName);
-  options?.beforeUpload?.();
-  const { presignedUrl, obsUrl } = await resolvePresignedUrl(
-    data,
-    fileName,
-    extendParam,
-  );
-
+): Promise<void> => {
   try {
-    await putUpload(file, presignedUrl, options?.onProgress);
-    options?.afterUpload?.(obsUrl);
-    return obsUrl;
-  } catch {
-    throw '上传失败！请联系管理员或重新上传';
+    // 备份仅复用 isAnon，不触发主流程的 validatedCb / completeUploadCb 等回调
+    const backupExtendParam: UploadExtendParam | undefined = extendParam?.isAnon
+      ? { isAnon: true }
+      : undefined;
+    const { presignedUrl, obsUrl } = await resolvePresignedUrl(
+      data,
+      fileName,
+      backupExtendParam,
+    );
+    await putUpload(file, presignedUrl);
+    console.log('[backupUpload] 已备份至自建桶', obsUrl);
+  } catch (err) {
+    console.warn('[backupUpload] 自建桶备份失败', fileName, err);
   }
 };
 
 /**
- * 单个普通上传
- * @param data 校验参数
- * @param file 上传文件
- * @param extendParam 额外的参数，fileName 用于 blob 场景保留原始文件名
- * @returns 上传成功后的 obsUrl
+ * 异步触发自建桶备份，不阻塞主上传返回。
  */
-export const singleUpload = async (
+export const triggerBackupUpload = (
   data: UploadData,
-  file: File | Blob,
+  file: Blob | File,
+  fileName: string,
   extendParam?: UploadExtendParam,
-): Promise<string> => {
-  const rawName = extendParam?.fileName || (file as File).name;
-  return uploadByPresignedUrl(data, file, rawName, extendParam);
-};
-
-/**
- * 单个上传（原分片上传入口，现改为预签名 PUT 上传，保留此方法名以兼容业务调用）
- * @param data 校验参数
- * @param file 上传文件项
- * @param extendParam 额外参数，支持 progressCb / beforeUploadCb / completeUploadCb
- * @returns 上传成功后的 obsUrl
- */
-export const singlePartUpload = async (
-  data: UploadData,
-  file: UploadFileItem,
-  extendParam?: UploadExtendParam,
-): Promise<string> => {
-  return uploadFileItem(data, file, extendParam);
-};
-
-/**
- * 批量上传（循环调用预签名 PUT，不再分片）
- * @param data 校验参数
- * @param fileList 待上传文件列表
- * @param extendParam 额外参数
- * @returns 与 fileList 顺序对应的上传结果 URL 数组，失败项为空字符串
- */
-export const multipartUpload = async (
-  data: UploadData,
-  fileList: UploadFileItem[],
-  extendParam?: UploadExtendParam,
-): Promise<string[] | string> => {
-  const promiseList: Array<Promise<string>> = [];
-  for (let i = 0; i < fileList.length; i++) {
-    promiseList.push(uploadFileItem(data, fileList[i], extendParam));
-  }
-  return PromiseAll(promiseList);
-};
-
-/**
- * 上传单个 UploadFileItem，并触发 extendParam 中的批量上传回调。
- * @param data 校验参数
- * @param file 上传文件项
- * @param extendParam 额外参数
- */
-const uploadFileItem = async (
-  data: UploadData,
-  file: UploadFileItem,
-  extendParam?: UploadExtendParam,
-): Promise<string> => {
-  return uploadByPresignedUrl(data, file.blob, file.name, extendParam, {
-    beforeUpload: () => extendParam?.beforeUploadCb?.(file),
-    onProgress: (progress) => extendParam?.progressCb?.(progress, file),
-    afterUpload: (obsUrl) => extendParam?.completeUploadCb?.(obsUrl, file),
-  });
-};
-
-/**
- * 通过隐藏 a 标签触发浏览器下载。
- * @param url 文件访问地址
- * @param fileName 下载保存时的文件名
- */
-const downLoad = (url: string, fileName?: string) => {
-  const downloadLink = document.createElement('a');
-  downloadLink.style.display = 'none';
-  downloadLink.download = fileName || 'download';
-  downloadLink.href = url;
-  url ? downloadLink.click() : message.error('下载图片链接不存在');
-};
-
-/**
- * 单个文件下载（直接使用 url 下载，不再走 OBS/OSS SDK 签名）
- * @param data 保留入参以兼容原调用，当前未使用
- * @param url 文件访问地址
- * @param extendParam 额外参数，fileName 可指定下载文件名
- */
-export const singleDownload = async (
-  _data: UploadData,
-  url: string,
-  extendParam?: UploadExtendParam,
-) => {
-  let fileName = extendParam?.fileName;
-  if (!fileName) {
-    try {
-      fileName = decodeURI(
-        new URL(url).pathname.split('/').pop() || 'download',
-      );
-    } catch {
-      fileName = decodeURI(url.split('/').pop() || 'download');
-    }
-  }
-  downLoad(url, fileName);
-};
-
-/**
- * 串行执行上传 Promise 列表，单个失败不影响其余文件，失败项记为空字符串。
- * 逻辑与原 upload.ts 的 PromiseAll 保持一致。
- * @param iterator 上传 Promise 数组
- */
-const PromiseAll = (iterator: Array<Promise<string>>): Promise<string[]> => {
-  const promises = Array.from(iterator);
-  const len = promises.length;
-  const result: string[] = [];
-  // biome-ignore lint/suspicious/noAsyncPromiseExecutor: 保持与原 upload.ts 一致的串行容错逻辑
-  return new Promise(async (resolve) => {
-    for (let i = 0; i < promises.length; i++) {
-      await promises[i]
-        .then((res) => {
-          result[i] = res;
-          if (i + 1 === len) {
-            resolve(result);
-          }
-        })
-        .catch(() => {
-          result[i] = '';
-          if (i + 1 === len) {
-            resolve(result);
-          }
-        });
-    }
-  });
+): void => {
+  void backupUploadToSelfHosted(data, file, fileName, extendParam);
 };
