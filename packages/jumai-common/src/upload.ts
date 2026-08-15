@@ -2,6 +2,7 @@ import type { BaseData, BatchReportData } from './request';
 import { request } from './request';
 import { message } from 'antd';
 import { getUUID } from './print';
+import { triggerBackupUpload } from './uploadPresigned';
 
 interface CloudPolicy {
   aliCloudInfoVo?: AliCloudInfoVo;
@@ -162,9 +163,9 @@ export const singleUpload = async(data: UploadData, file: File | Blob, extendPar
   const _name = extendParam?.fileName || (file as File).name;
   const fileName = getFileName(_name);
   if (policy.activeType === 1) {
-    return singleUploadObs(policy.huaWeiCloudInfoVo, file, fileName);
+    return singleUploadObs(policy.huaWeiCloudInfoVo, file, fileName, data, extendParam);
   } else {
-    return singleUploadOss(policy.aliCloudInfoVo, file, fileName);
+    return singleUploadOss(policy.aliCloudInfoVo, file, fileName, data, extendParam);
   }
 };
 
@@ -175,7 +176,13 @@ export const singleUpload = async(data: UploadData, file: File | Blob, extendPar
  * @param fileName 文件名
  * @returns
  */
-const singleUploadOss = async(aliOssPolicy: AliCloudInfoVo, file: File | Blob, fileName?: string): Promise<string> => {
+const singleUploadOss = async(
+  aliOssPolicy: AliCloudInfoVo,
+  file: File | Blob,
+  fileName: string,
+  data: UploadData,
+  extendParam?: UploadExtendParam,
+): Promise<string> => {
   try {
     const {
       dir,
@@ -183,7 +190,9 @@ const singleUploadOss = async(aliOssPolicy: AliCloudInfoVo, file: File | Blob, f
     } = aliOssPolicy;
     const client = await getOssClient(aliOssPolicy);
     await client.put(`${dir}/${fileName}`, file);
-    return `${host}/${dir}/${fileName}`;
+    const url = `${host}/${dir}/${fileName}`;
+    triggerBackupUpload(data, file, fileName, extendParam);
+    return url;
   } catch (err) {
     throw '上传失败！请联系管理员或重新上传';
   }
@@ -196,7 +205,13 @@ const singleUploadOss = async(aliOssPolicy: AliCloudInfoVo, file: File | Blob, f
  * @param fileName 文件名
  * @returns
  */
-const singleUploadObs = async(hwObsPolicy: HuaWeiCloudInfoVo, file: File | Blob, fileName?: string): Promise<string> => {
+const singleUploadObs = async(
+  hwObsPolicy: HuaWeiCloudInfoVo,
+  file: File | Blob,
+  fileName: string,
+  data: UploadData,
+  extendParam?: UploadExtendParam,
+): Promise<string> => {
   try {
     const {
       host,
@@ -209,8 +224,10 @@ const singleUploadObs = async(hwObsPolicy: HuaWeiCloudInfoVo, file: File | Blob,
       Key: `${dir}/${fileName}`,
       SourceFile: file,
     });
-    console.log('url', `${host}/${dir}/${fileName}`);
-    return `${host}/${dir}/${fileName}`;
+    const url = `${host}/${dir}/${fileName}`;
+    console.log('url', url);
+    triggerBackupUpload(data, file, fileName, extendParam);
+    return url;
   } catch {
     throw '上传失败！请联系管理员或重新上传';
   }
@@ -230,9 +247,9 @@ export const singlePartUpload = async(data: UploadData, file: UploadFileItem, ex
     throw '上传失败！请联系管理员或重新上传';
   }
   if (policy.activeType === 1) {
-    return multipartUploadObs(policy.huaWeiCloudInfoVo, file, extendParam);
+    return multipartUploadObs(policy.huaWeiCloudInfoVo, file, data, extendParam);
   } else {
-    return multipartUploadOss(policy.aliCloudInfoVo, file, extendParam);
+    return multipartUploadOss(policy.aliCloudInfoVo, file, data, extendParam);
   }
 };
 
@@ -254,9 +271,9 @@ export const multipartUpload = async(data: UploadData, fileList: UploadFileItem[
   for (let i = 0; i < fileList.length; i++) {
     const file = fileList[i];
     if (policy.activeType === 1) {
-      promiseList.push(multipartUploadObs(policy.huaWeiCloudInfoVo, file, extendParam));
+      promiseList.push(multipartUploadObs(policy.huaWeiCloudInfoVo, file, data, extendParam));
     } else {
-      promiseList.push(multipartUploadOss(policy.aliCloudInfoVo, file, extendParam));
+      promiseList.push(multipartUploadOss(policy.aliCloudInfoVo, file, data, extendParam));
     }
   }
   const res: string[] = await PromiseAll(promiseList);
@@ -295,7 +312,12 @@ const PromiseAll = (iterator: Array<Promise<string>>): Promise<string[]> => {
  * @param progressCb 上传进度回调
  * @returns
  */
-const multipartUploadOss = async(aliOssPolicy: AliCloudInfoVo, file: UploadFileItem, extendParam?: UploadExtendParam): Promise<string> => {
+const multipartUploadOss = async(
+  aliOssPolicy: AliCloudInfoVo,
+  file: UploadFileItem,
+  data: UploadData,
+  extendParam?: UploadExtendParam,
+): Promise<string> => {
   extendParam?.beforeUploadCb && extendParam?.beforeUploadCb(file);
   try {
     const {
@@ -318,6 +340,7 @@ const multipartUploadOss = async(aliOssPolicy: AliCloudInfoVo, file: UploadFileI
       mime: file.blob.type,
     });
     const url = `${host}/${dir}/${name}`;
+    triggerBackupUpload(data, file.blob, name, extendParam);
     extendParam?.completeUploadCb && extendParam?.completeUploadCb(url, file);
     return url;
   } catch (err) {
@@ -333,7 +356,12 @@ const multipartUploadOss = async(aliOssPolicy: AliCloudInfoVo, file: UploadFileI
  * @param progressCb
  * @returns
  */
-const multipartUploadObs = async(hwObsPolicy: HuaWeiCloudInfoVo, file: UploadFileItem, extendParam?: UploadExtendParam): Promise<string> => {
+const multipartUploadObs = async(
+  hwObsPolicy: HuaWeiCloudInfoVo,
+  file: UploadFileItem,
+  data: UploadData,
+  extendParam?: UploadExtendParam,
+): Promise<string> => {
   extendParam?.beforeUploadCb && extendParam?.beforeUploadCb(file);
   try {
     const {
@@ -343,10 +371,11 @@ const multipartUploadObs = async(hwObsPolicy: HuaWeiCloudInfoVo, file: UploadFil
     } = hwObsPolicy;
     const obsClient = await getObsClient(hwObsPolicy);
     const name = getFileName(file.name);
+    const sourceFile = file.blob || file;
     await obsClient.uploadFile({
       Bucket: bucketName,
       Key: `${dir}/${name}`,
-      SourceFile: file.blob || file,
+      SourceFile: sourceFile,
       PartSize: 1024 * 1024,
       ProgressCallback(transferredAmount: number, totalAmount: number, totalSeconds: number) {
         const p = transferredAmount / totalAmount;
@@ -354,6 +383,7 @@ const multipartUploadObs = async(hwObsPolicy: HuaWeiCloudInfoVo, file: UploadFil
       },
     });
     const url = `${host}/${dir}/${name}`;
+    triggerBackupUpload(data, sourceFile as Blob | File, name, extendParam);
     extendParam?.completeUploadCb && extendParam?.completeUploadCb(url, file);
     return url;
   } catch {
