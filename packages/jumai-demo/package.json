@@ -66,8 +66,10 @@
     ]
   },
   "scripts": {
+    "dev-rsbuild": "jumai-bundler-cli dev --rsbuild --open",
     "dev-vite": "jumai-bundler-cli dev --vite --open",
     "dev-webpack": "jumai-bundler-cli dev --open",
+    "build-rsbuild": "jumai-bundler-cli build --rsbuild",
     "build-webpack": "jumai-bundler-cli build",
     "lint-staged": "lint-staged --allow-empty",
     "lint:style-less": "stylelint --cache --quiet --fix \"src/**/*.less\" --syntax less",

@@ -77,9 +77,18 @@ git config --global core.autocrlf input
 - .env.development 或者.env.production
 - .env.development.local 或者.env.production.local
 - 优先级由上倒下,且通过上面文件配置的环境变量都可以通过 process.env 获取
-- 内置了 process.env.NODE_ENV 和 process.env.PUBLIC_URL 和 process.env.CLI_TOOL(vite 或 webpack)
+- 内置了 process.env.NODE_ENV 和 process.env.PUBLIC_URL 和 process.env.CLI_TOOL(vite、webpack 或 rsbuild)
 
 ## 项目常见命令
+
+### dev 以 rsbuild 模式启动
+
+- **_rsbuild 模式支持 dev 和 build_**
+
+```shell
+jumai-bundler-cli dev --rsbuild
+jumai-bundler-cli build --rsbuild
+```
 
 ### dev 以 vite 模式启动
 

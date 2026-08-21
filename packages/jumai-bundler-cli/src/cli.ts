@@ -1,7 +1,9 @@
 import cac from 'cac';
 import path from 'path';
+import { buildRsbuild } from './buildRsbuild';
 import { buildWebpack } from './buildWebpack';
 import { cwd, DEFAULT_CONFIG_NAME, DEFAULT_SRC_DIR, version } from './constants';
+import { devRsbuild } from './devRsbuild';
 import { devVite } from './devVite';
 import { devWebpack } from './devWebpack';
 import type { cliOptions, UserConfig } from './types';
@@ -34,6 +36,7 @@ cli
   .option('--host [host]', 'your host')
   .option('--open [open]', 'open browser')
   .option('--vite [vite]', 'vite strat your application')
+  .option('--rsbuild [rsbuild]', 'rsbuild start your application')
   .action(async(root, options: cliOptions) => {
     process.env.NODE_ENV = Env.development;
 
@@ -45,7 +48,16 @@ cli
       host: options?.host,
     });
 
-    if (options.vite || userConfig.vite) {
+    if (options.rsbuild || userConfig.rsbuild) {
+      process.env.CLI_TOOL = CliTool.rsbuild;
+      await devRsbuild({
+        userConfig,
+        cwd,
+        userEnv,
+        env: Env.development,
+        entry,
+      });
+    } else if (options.vite || userConfig.vite) {
       process.env.CLI_TOOL = CliTool.vite;
       await devVite({
         userConfig,
@@ -68,20 +80,31 @@ cli
 cli
   .command('build [root]', 'build for production')
   .option('--watch [watch]', 'watch file')
+  .option('--rsbuild [rsbuild]', 'rsbuild build your application')
   .action(async(root, options: cliOptions) => {
     process.env.NODE_ENV = Env.production;
-    process.env.CLI_TOOL = CliTool.webpack;
 
     const userEnv = loadEnv(cwd, '.env');
     const userConfig: UserConfig = await loadFile(options?.config ? path.resolve(cwd, options.config) : userConfigFile) || {};
     initUserConfig(userConfig, { watch: options?.watch });
 
-    await buildWebpack({
-      userConfig,
-      cwd,
-      userEnv,
-      entry,
-    });
+    if (options.rsbuild || userConfig.rsbuild) {
+      process.env.CLI_TOOL = CliTool.rsbuild;
+      await buildRsbuild({
+        userConfig,
+        cwd,
+        userEnv,
+        entry,
+      });
+    } else {
+      process.env.CLI_TOOL = CliTool.webpack;
+      await buildWebpack({
+        userConfig,
+        cwd,
+        userEnv,
+        entry,
+      });
+    }
   });
 
 cli.help();

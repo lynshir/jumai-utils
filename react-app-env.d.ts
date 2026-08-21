@@ -1,7 +1,7 @@
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'development' | 'production';
-    CLI_TOOL: 'webpack' | 'vite';
+    CLI_TOOL: 'webpack' | 'vite' | 'rsbuild';
     PUBLIC_URL: string;
     REACT_APP_OSS: string;
   }

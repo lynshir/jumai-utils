@@ -9,11 +9,13 @@ import type { GetBabelConfigOptions } from 'jumai-babel-preset';
 import type { TransformOptions as EsbuildOptions } from 'esbuild';
 import type { MinifyOptions as TerserOptions } from 'terser';
 import type { CssNanoOptions } from 'css-minimizer-webpack-plugin';
+import type { RsbuildConfig } from '@rsbuild/core';
 import type { UserConfig as ViteUserConfig } from 'vite';
 
 export enum CliTool {
   vite = 'vite',
   webpack = 'webpack',
+  rsbuild = 'rsbuild',
 }
 
 export enum Env {
@@ -119,6 +121,7 @@ export interface UserConfig extends BaseConfig, StyleConfig, GetBabelConfigOptio
   deadCode?: { directories?: string[]; exclude?: string[]; root?: string; };
   htmlOption?: false | HtmlWebpackPlugin.Options;
   vite?: ViteUserConfig;
+  rsbuild?: RsbuildConfig;
 }
 
 export interface WebpackConfigOptions {
@@ -149,6 +152,12 @@ export interface ViteDevOptions {
   readonly userEnv?: WebpackConfigOptions['userEnv'];
 }
 
+export type RsbuildDevOptions = ViteDevOptions;
+
+export type RsbuildConfigOptions = ViteDevOptions;
+
+export type RsbuildBuildOptions = Omit<RsbuildConfigOptions, 'env'>;
+
 export interface cliOptions {
   config?: string;
   port?: string;
@@ -156,4 +165,5 @@ export interface cliOptions {
   watch?: boolean;
   open?: boolean;
   vite?: boolean;
+  rsbuild?: boolean;
 }

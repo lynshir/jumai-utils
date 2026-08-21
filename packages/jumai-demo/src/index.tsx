@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'development') {
   if (process.env.CLI_TOOL === 'vite') {
     // @ts-ignore
     import.meta.hot.accept();
-  } else if (process.env.CLI_TOOL === 'webpack') {
+  } else if (process.env.CLI_TOOL === 'webpack' || process.env.CLI_TOOL === 'rsbuild') {
     // @ts-ignore
     module.hot.accept(render);
   }
