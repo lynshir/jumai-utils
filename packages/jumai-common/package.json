@@ -18,6 +18,7 @@
     "@vitest/coverage-v8": "0.34.4",
     "antd": "4.24.7",
     "axios": "0.28.0",
+    "lodash": "4.17.21",
     "mobx": "5.15.7",
     "mobx-react": "6.3.1",
     "moment": "2.29.2",
@@ -25,6 +26,7 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-router-dom": "5.2.0",
+    "history": "4.9.0",
     "vitest": "0.34.4",
     "father": "4.3.5"
   },
@@ -47,6 +49,15 @@
   },
   "peerDependencies": {
     "antd": "4.24.7",
-    "moment": "2.29.2"
+    "moment": "2.29.2",
+    "@ant-design/icons": "4.7.0",
+    "axios": "0.28.0",
+    "history": "4.9.0",
+    "lodash": "4.17.21",
+    "mobx": "5.15.7",
+    "mobx-react": "6.3.1",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-router-dom": "5.2.0"
   }
 }

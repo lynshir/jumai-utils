@@ -10,6 +10,7 @@
     "dist"
   ],
   "devDependencies": {
+    "@ant-design/icons": "4.7.0",
     "@vitejs/plugin-react": "4.1.0",
     "@testing-library/react": "14.0.0",
     "@types/lodash": "4.14.165",
@@ -54,6 +55,13 @@
   },
   "peerDependencies": {
     "antd": "4.24.7",
-    "moment": "2.29.2"
+    "moment": "2.29.2",
+    "@ant-design/icons": "4.7.0",
+    "lodash": "4.17.21",
+    "mobx": "5.15.7",
+    "mobx-react": "6.3.1",
+    "qs": "6.11.2",
+    "react": "17.0.1",
+    "react-dom": "17.0.1"
   }
 }
