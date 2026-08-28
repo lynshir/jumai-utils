@@ -1,6 +1,6 @@
 {
   "name": "jumai-common",
-  "version": "3.0.2-rc.1",
+  "version": "3.0.2-rc.2",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/index.js",
