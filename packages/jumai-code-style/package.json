@@ -1,6 +1,6 @@
 {
   "name": "jumai-code-style",
-  "version": "3.0.2-rc.2",
+  "version": "3.0.2-rc.3",
   "main": "dist/index.js",
   "bin": {
     "jumai-code-style-setup-husky": "./bin/setup-husky.js"
@@ -9,6 +9,7 @@
     "bin",
     "dist",
     "eslintNode.js",
+    "eslintPatch.js",
     "eslintReact.js",
     "stylelint.js",
     "templates"
@@ -22,8 +23,14 @@
     "stylelint": "^13.13.1",
     "validate-commit-msg": ">=2"
   },
+  "peerDependenciesMeta": {
+    "validate-commit-msg": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@commitlint/config-conventional": "17.8.1",
+    "@rushstack/eslint-patch": "1.10.5",
     "@typescript-eslint/eslint-plugin": "5.2.0",
     "@typescript-eslint/parser": "5.2.0",
     "babel-eslint": "10.1.0",

@@ -132,10 +132,14 @@ export function cssRule({
         });
 
       // postcss-loader
+      // 显式指定 postcss 8，避免 pnpm 下被 stylelint 等依赖的 postcss@7 污染解析
       rule
         .use('postcss-loader')
         .loader(require.resolve('postcss-loader'))
         .options({
+          implementation: require.resolve('postcss', {
+            paths: [require.resolve('jumai-postcss-preset')],
+          }),
           postcssOptions: getPostcssConfig({
             browsers: getBrowsersList(targets),
             px2rem,

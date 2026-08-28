@@ -1,1 +1,3 @@
-module.exports = require('./dist/eslintNode').eslintNode;
+const { withResolvedParsers } = require('./eslintPatch');
+
+module.exports = withResolvedParsers(require('./dist/eslintNode').eslintNode);

@@ -179,7 +179,11 @@ export function config({
       ? getGranularSplitChunks()
       : undefined,
     tools: {
+      // 显式指定 postcss 8，避免 pnpm 下被 stylelint 等依赖的 postcss@7 污染解析
       postcss: () => ({
+        implementation: require.resolve('postcss', {
+          paths: [require.resolve('jumai-postcss-preset')],
+        }),
         postcssOptions: getPostcssConfig({
           browsers: getBrowsersList(targets),
           autoprefixer,
