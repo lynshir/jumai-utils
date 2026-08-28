@@ -1,22 +1,29 @@
 {
   "name": "jumai-code-style",
-  "version": "3.0.2-rc.1",
+  "version": "4.0.0-rc.1",
   "main": "dist/index.js",
+  "bin": {
+    "jumai-code-style-setup-husky": "./bin/setup-husky.js"
+  },
   "files": [
+    "bin",
     "dist",
     "eslintNode.js",
     "eslintReact.js",
-    "stylelint.js"
+    "stylelint.js",
+    "templates"
   ],
-  "dependencies": {
-    "husky": "4.3.0",
-    "lint-staged": "10.5.2",
-    "@commitlint/cli": "17.8.1",
-    "@commitlint/config-conventional": "17.8.1",
-    "validate-commit-msg": "2.14.0",
+  "peerDependencies": {
+    "@commitlint/cli": ">=17",
     "eslint": "7.29.0",
-    "prettier": "2.2.1",
-    "stylelint": "13.13.1",
+    "husky": ">=9",
+    "lint-staged": ">=13",
+    "prettier": "^2.2.1",
+    "stylelint": "^13.13.1",
+    "validate-commit-msg": ">=2"
+  },
+  "dependencies": {
+    "@commitlint/config-conventional": "17.8.1",
     "@typescript-eslint/eslint-plugin": "5.2.0",
     "@typescript-eslint/parser": "5.2.0",
     "babel-eslint": "10.1.0",
