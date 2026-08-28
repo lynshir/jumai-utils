@@ -1,6 +1,6 @@
 {
   "name": "jumai-code-style",
-  "version": "3.0.2-rc.2",
+  "version": "3.0.2-rc.3",
   "main": "dist/index.js",
   "bin": {
     "jumai-code-style-setup-husky": "./bin/setup-husky.js"
