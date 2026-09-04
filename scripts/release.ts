@@ -162,6 +162,70 @@ function getNpmTag(version: string) {
   return 'latest';
 }
 
+// 判断发布错误是否为 OTP 失效/错误（TOTP 约 30s 过期，monorepo 连发很容易中途 EOTP）
+function isOtpError(error: unknown) {
+  const text = [
+    error instanceof Error ? error.message : String(error),
+    // zx ProcessOutput
+    (error as { stderr?: string; stdout?: string })?.stderr,
+    (error as { stderr?: string; stdout?: string })?.stdout,
+  ].filter(Boolean)
+    .join('\n');
+  return /EOTP|one-time password|otp/i.test(text);
+}
+
+// 判断该版本是否已发布（中途失败重跑时跳过）
+function isAlreadyPublishedError(error: unknown) {
+  const text = [
+    error instanceof Error ? error.message : String(error),
+    (error as { stderr?: string; stdout?: string })?.stderr,
+    (error as { stderr?: string; stdout?: string })?.stdout,
+  ].filter(Boolean)
+    .join('\n');
+  return /EPUBLISHCONFLICT|cannot publish over|already been published|previously published/i.test(text);
+}
+
+// 逐包发布：OTP 过期则重新输入并重试当前包，避免一次 -r 用同一个 OTP 发到一半失败
+async function publishPackagesOneByOne(
+  packages: PublishPackagesInfo[],
+  tag: string,
+  branch: string,
+) {
+  let otp = '';
+
+  for (const item of packages) {
+    const name = item.packageJson.name!;
+    const maxAttempts = 5;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      if (!otp) {
+        otp = (await question(
+          `Input npm OTP for ${name} (attempt ${attempt}/${maxAttempts}, from authenticator now): `
+        )).trim();
+        assert(otp, 'OTP is required when account 2FA is enabled');
+      }
+
+      console.log(chalk.bold(`publishing ${name} ...`));
+      try {
+        await $`cd ${item.packagePath} ; pnpm publish --no-git-checks --tag ${tag} --publish-branch ${branch} --otp ${otp}`;
+        console.log(chalk.green(`published ${name}`));
+        break;
+      } catch (error) {
+        if (isAlreadyPublishedError(error)) {
+          console.log(chalk.yellow(`${name} already published, skip`));
+          break;
+        }
+        if (isOtpError(error) && attempt < maxAttempts) {
+          console.log(chalk.yellow('OTP invalid or expired, enter a fresh code'));
+          otp = '';
+          continue;
+        }
+        throw error;
+      }
+    }
+  }
+}
+
 // 立即执行的异步函数
 (async() => {
   // 获取要发布的包信息
@@ -234,9 +298,10 @@ function getNpmTag(version: string) {
     (await $`cd ${item.packagePath} ; npm version ${version} --no-git-tag-version`);
   }));
 
-  // 发布所有包到 NPM，--no-git-checks，跳过 Git 状态检查，-r	递归发布所有包（monorepo 模式），--tag ${tag}	指定 npm 标签（latest 或 next）
-  // --publish-branch ${branch}	指定发布分支
-  (await $`cd ${cwd} ; pnpm publish --no-git-checks -r --tag ${tag} --publish-branch ${branch}`);
+  // 账号 2FA 开启后必须带 OTP；TOTP 约 30s 过期，不能用同一个 OTP 做 pnpm -r 连发
+  // 改为逐包 publish：复用当前 OTP，遇 EOTP 再重新输入
+  console.log(chalk.bold('publish packages (one by one, re-ask OTP on EOTP)'));
+  await publishPackagesOneByOne(publishPackagesInfo, tag, branch);
 
   // 提交更改
   console.log(chalk.bold('commit'));
