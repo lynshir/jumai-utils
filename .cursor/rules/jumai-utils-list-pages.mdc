@@ -1,0 +1,16 @@
+---
+description: jumai-utils 列表页（左右 Programme / 上下 SearchListStructure、查询条件、表格上方按钮、主子表、汇总）。用户说列表页、筛选+表格、主子表、左右结构、上下结构时使用。
+alwaysApply: false
+---
+
+# jumai-utils 列表页
+
+未指定结构时默认 **左右：`Programme` + `ProgrammeComponent`**，仅主表加 `hiddenSubTable: true`。
+
+- 左右：`new Programme({ moduleName, gridModel: new MainSubStructureModel(config), filterItems })`，页面只渲染 `<ProgrammeComponent store={programme} />`。
+- 上下仅主表：`new SearchListModal({ programme: filterset, grid })` + `<SearchListStructure />`。它内部强制 `hiddenSubTable: true`。
+- 上下且要子表：自己拼 `NormalProgrammeComponent` + `MainSubStructure`，并设 `grid.getFilterParams = () => programme.filterItems.params`、`handleSearch: () => grid.onQuery()`。
+- 按钮配在 `MainSubStructureModel.buttons`（表格上方）。子表 `buttons` 必须是 `(subTable) => IButton[]`。
+- 汇总用 `collectData`（按钮上方）；表尾合计用 `summaryRows` / `sumColumns`。
+- 主表 `onQuery` 拆 `filterParams`，返回 `PaginationData`（`data.list` / `data.totalCount`）。
+- 查询项写法见 jumai-utils skill 的 `filter-items.md`。

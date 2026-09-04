@@ -1,36 +1,44 @@
 // 导入 Node.js 内置的 assert 模块，用于断言测试
 import assert from 'assert';
+
 // 导入 git-repo-info 库，用于获取 Git 仓库信息
 import getGitRepoInfo from 'git-repo-info';
+
 // 导入 zx 库的 globals，用于执行 shell 命令
 import 'zx/globals';
+
 // 导入 chalk 库，用于终端颜色输出
 import chalk from 'chalk';
+
 // 导入 Node.js 内置的 fs 模块，用于文件系统操作
 import fs from 'fs';
+
 // 导入 Node.js 内置的 path 模块，用于路径操作
 import path from 'path';
 
 // 获取当前工作目录的绝对路径
 const cwd = fs.realpathSync(process.cwd());
+
 // 定义要发布的 NPM 仓库地址
 const publishRegistry = 'https://registry.npmjs.org/';
+
 // 定义构建命令
 const buildCmd = 'build';
+
 // 定义测试命令
 const testCmd = 'test';
 
 // 定义 PackageJsonInfo 接口，描述 package.json 文件的结构
 interface PackageJsonInfo {
-  name?: string;        // 包名
-  private?: boolean;    // 是否为私有包
-  version?: string;     // 版本号
+  name?: string; // 包名
+  private?: boolean; // 是否为私有包
+  version?: string; // 版本号
 }
 
 // 定义 PublishPackagesInfo 接口，描述要发布的包信息
 interface PublishPackagesInfo {
-  filename: string;             // 包目录名
-  packagePath: string;          // 包的完整路径
+  filename: string; // 包目录名
+  packagePath: string; // 包的完整路径
   packageJson: PackageJsonInfo; // 包的 package.json 内容
 }
 
@@ -41,8 +49,10 @@ async function updateGeneratorPackages(version: string) {
     {
       // 第一个生成器模板路径
       generatorTplPath: path.resolve(cwd, 'packages/generator-jumai-react-h5/generators/app/templates/package.json.tpl'),
+
       // 需要更新的 dependencies 依赖
       updateDependencies: [],
+
       // 需要更新的 devDependencies 依赖
       updateDevDependencies: [
         'jumai-bundler-cli',
@@ -52,11 +62,13 @@ async function updateGeneratorPackages(version: string) {
     {
       // 第二个生成器模板路径
       generatorTplPath: path.resolve(cwd, 'packages/generator-jumai-react-web/generators/app/templates/package.json.tpl'),
+
       // 需要更新的 dependencies 依赖
       updateDependencies: [
         'jumai-utils',
         'jumai-common',
       ],
+
       // 需要更新的 devDependencies 依赖
       updateDevDependencies: [
         'jumai-bundler-cli',
@@ -70,6 +82,7 @@ async function updateGeneratorPackages(version: string) {
   await Promise.all(data.map(async(item) => {
     // 读取模板文件内容
     const oldDataStr = await fs.promises.readFile(item.generatorTplPath, 'utf8');
+
     // 解析 JSON 数据
     const oldDataJson = JSON.parse(oldDataStr);
 
@@ -92,27 +105,33 @@ async function updateGeneratorPackages(version: string) {
 async function getPublishPackagesInfo(): Promise<PublishPackagesInfo[]> {
   // 获取 packages 目录路径
   const packagesPath = path.resolve(cwd, 'packages');
+
   // 读取 packages 目录下的所有文件/文件夹
   const files = await fs.promises.readdir(packagesPath);
+
   // 初始化结果数组
   const result: PublishPackagesInfo[] = [];
+
   // 遍历所有文件/文件夹
   for (let i = 0; i < files.length; i++) {
     // 构建包路径
     const packagePath = path.resolve(packagesPath, files[i]);
+
     // 构建 package.json 路径
     const packageJsonPath = path.resolve(packagePath, 'package.json');
+
     // 检查是否存在 package.json 文件
     if (fs.existsSync(packageJsonPath)) {
       // 读取并解析 package.json 文件
       const content: PackageJsonInfo = require(packageJsonPath);
+
       // 检查是否不是私有包（private !== true）
       if (content.private !== true) {
         // 将包信息添加到结果数组
         result.push({
-          filename: files[i],      // 包目录名
-          packagePath,             // 包的完整路径
-          packageJson: content,     // 包的 package.json 内容
+          filename: files[i], // 包目录名
+          packagePath, // 包的完整路径
+          packageJson: content, // 包的 package.json 内容
         });
       }
     }
@@ -126,6 +145,7 @@ async function getPublishPackagesInfo(): Promise<PublishPackagesInfo[]> {
 function getNpmTag(version: string) {
   // 定义版本号正则表达式，匹配标准版本号格式
   const checkVersionReg = /^\d+\.\d+\.\d+(-(alpha|beta|rc)\.\d+){0,1}$/;
+
   // 检查版本号是否符合规范
   if (!checkVersionReg.test(version)) {
     // 如果不符合规范，抛出错误
@@ -146,6 +166,7 @@ function getNpmTag(version: string) {
 (async() => {
   // 获取要发布的包信息
   const publishPackagesInfo = await getPublishPackagesInfo();
+
   // 获取第一个包的信息，用于检查
   const checkedPackage = publishPackagesInfo[0].packageJson;
 
@@ -200,6 +221,7 @@ function getNpmTag(version: string) {
   const version = (await question(
     `Input release version (current: ${checkedPackage.version}): `
   )).trim();
+
   // 根据版本号获取 NPM 标签
   const tag = getNpmTag(version);
 

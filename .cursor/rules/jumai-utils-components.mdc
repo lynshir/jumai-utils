@@ -1,0 +1,14 @@
+---
+description: jumai-utils 非列表封装：FullModal 全屏弹窗、ExportModal 导出、ImportModal 导入、Permission 权限、ImagePreviewModal 图片预览、BatchReport 批量结果、ImgFormatter。
+alwaysApply: false
+---
+
+# jumai-utils 其它组件
+
+- 全屏弹窗 → `FullModal`（`visible` / `title` / `onCancel` / `operation` / `style`）。确认框仍可用 antd `Modal.confirm`。
+- 导出 → `ExportStore` + `ExportModal`，`onShow(fileName, exportType, selectedIds, queryParam, queryParamShow)`。
+- 导入 → `ImportModel` + `ImportModal`。上传用 `jumai-common` 的 `multipartUpload`，接口传 `fileUrl` + `fileName`。
+- 行内权限 → `<Permission permissionId>`；工具栏按钮用 `pageId` + `permissionId`。
+- 表格图 → `ImgFormatter`；时间戳列 → `TimeStampFormatter`。
+- 多图预览 → `ImagePreviewModal`（`images` + `current`）。
+- 批量成功/失败 → `BatchReport`。

@@ -1,0 +1,24 @@
+---
+description: jumai-utils 组件选型总则。任意依赖 jumai-utils 的业务项目搭建或改页面时使用：列表页、查询条件、主子表、全屏弹窗、导出导入、权限。禁止用 antd Modal 或手写布局替代已有封装。
+alwaysApply: false
+---
+
+# jumai-utils 总则
+
+当前项目依赖 `jumai-utils` 时，UI 基建一律用该库导出，不要用 antd `Modal` 做全屏，不要手写查询+表格布局。详细模板读 `jumai-utils` skill。
+
+| 场景 | 用什么 |
+|---|---|
+| 左筛选+右表格（默认，含方案） | `Programme` + `ProgrammeComponent` |
+| 上筛选+下主表 | `SearchListModal` + `SearchListStructure` |
+| 上筛选+下主子表 | `NormalProgramme` + `MainSubStructure`（不要用 SearchListStructure） |
+| 弹窗内筛选 | `NormalProgramme` + `NormalProgrammeComponent` |
+| 主子表 | `MainSubStructureModel` + `MainSubStructure` |
+| 纯表格 | `EgGridModel` + `EgGrid` |
+| 全屏弹窗 | `FullModal` |
+| 导出 / 导入 | `ExportStore`+`ExportModal` / `ImportModel`+`ImportModal` |
+| 表格图片 / 时间戳 | `ImgFormatter` / `TimeStampFormatter` |
+| 权限 | `Permission` / 按钮 `permissionId` |
+| 请求 | `request`，类型 `BaseData` / `PaginationData` |
+
+`import { ... } from 'jumai-utils'`。`Programme.moduleName` 与 `gridIdForColumnConfig` 必须唯一。下拉 `value` 必须是 string。
