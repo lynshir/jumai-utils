@@ -31,7 +31,7 @@
 
 ### [father4](https://www.npmjs.com/package/father)
 
-- 包打包工具,主要涉及项目 jumai-base、jumai-sentry、egenie-vite-config、jumai-common、jumai-utils
+- 包打包工具,主要涉及项目 jumai-base、jumai-sentry、jumai-vite-config、jumai-common、jumai-utils
 
 ## 下载流程
 
@@ -62,6 +62,10 @@ npm config set registry https://registry.npmjs.org/
 
 ```shell
 npm run release
+```
+
+```
+已改为github发布
 ```
 
 ### 权限问题
