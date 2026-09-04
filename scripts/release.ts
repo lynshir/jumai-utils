@@ -22,6 +22,12 @@ const cwd = fs.realpathSync(process.cwd());
 // 定义要发布的 NPM 仓库地址
 const publishRegistry = 'https://registry.npmjs.org/';
 
+// GitHub Trusted Publishing 目标仓库
+const githubOwner = 'lynshir';
+const githubRepo = 'jumai-utils';
+const githubRemoteName = 'github';
+const githubRemoteUrl = `git@github.com:${githubOwner}/${githubRepo}.git`;
+
 // 定义构建命令
 const buildCmd = 'build';
 
@@ -162,67 +168,15 @@ function getNpmTag(version: string) {
   return 'latest';
 }
 
-// 判断发布错误是否为 OTP 失效/错误（TOTP 约 30s 过期，monorepo 连发很容易中途 EOTP）
-function isOtpError(error: unknown) {
-  const text = [
-    error instanceof Error ? error.message : String(error),
-    // zx ProcessOutput
-    (error as { stderr?: string; stdout?: string })?.stderr,
-    (error as { stderr?: string; stdout?: string })?.stdout,
-  ].filter(Boolean)
-    .join('\n');
-  return /EOTP|one-time password|otp/i.test(text);
-}
+async function ensureGithubRemote() {
+  const remotes = (await $`git remote`).stdout
+    .trim()
+    .split('\n')
+    .filter(Boolean);
 
-// 判断该版本是否已发布（中途失败重跑时跳过）
-function isAlreadyPublishedError(error: unknown) {
-  const text = [
-    error instanceof Error ? error.message : String(error),
-    (error as { stderr?: string; stdout?: string })?.stderr,
-    (error as { stderr?: string; stdout?: string })?.stdout,
-  ].filter(Boolean)
-    .join('\n');
-  return /EPUBLISHCONFLICT|cannot publish over|already been published|previously published/i.test(text);
-}
-
-// 逐包发布：OTP 过期则重新输入并重试当前包，避免一次 -r 用同一个 OTP 发到一半失败
-async function publishPackagesOneByOne(
-  packages: PublishPackagesInfo[],
-  tag: string,
-  branch: string,
-) {
-  let otp = '';
-
-  for (const item of packages) {
-    const name = item.packageJson.name!;
-    const maxAttempts = 5;
-
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      if (!otp) {
-        otp = (await question(
-          `Input npm OTP for ${name} (attempt ${attempt}/${maxAttempts}, from authenticator now): `
-        )).trim();
-        assert(otp, 'OTP is required when account 2FA is enabled');
-      }
-
-      console.log(chalk.bold(`publishing ${name} ...`));
-      try {
-        await $`cd ${item.packagePath} ; pnpm publish --no-git-checks --tag ${tag} --publish-branch ${branch} --otp ${otp}`;
-        console.log(chalk.green(`published ${name}`));
-        break;
-      } catch (error) {
-        if (isAlreadyPublishedError(error)) {
-          console.log(chalk.yellow(`${name} already published, skip`));
-          break;
-        }
-        if (isOtpError(error) && attempt < maxAttempts) {
-          console.log(chalk.yellow('OTP invalid or expired, enter a fresh code'));
-          otp = '';
-          continue;
-        }
-        throw error;
-      }
-    }
+  if (!remotes.includes(githubRemoteName)) {
+    console.log(chalk.bold(`add git remote ${githubRemoteName}`));
+    await $`git remote add ${githubRemoteName} ${githubRemoteUrl}`;
   }
 }
 
@@ -258,18 +212,6 @@ async function publishPackagesOneByOne(
   const registry = (await $`npm config get registry`).stdout.trim();
   assert(registry === publishRegistry, `npm registry is not ${publishRegistry}`);
 
-  // 检查 NPM 包所有权（被注释掉了）
-  // console.log(chalk.bold('check npm ownership'));
-  // const whoami = (await $`npm whoami`).stdout.trim();
-  // const owners = (await $`npm owner ls ${checkedPackage.name}`).stdout
-  //   .trim()
-  //   .split('\n')
-  //   .map((line) => {
-  //     return line.split(' ')[0];
-  //   });
-  //   console.log(whoami, owners, '---');
-  // assert(owners.includes(whoami), `${checkedPackage.name} is not owned by ${whoami}`);
-
   // 构建包
   console.log(chalk.bold('build packages'));
   await $`cd ${cwd}; npm run ${buildCmd}`;
@@ -286,8 +228,9 @@ async function publishPackagesOneByOne(
     `Input release version (current: ${checkedPackage.version}): `
   )).trim();
 
-  // 根据版本号获取 NPM 标签
+  // 根据版本号获取 NPM 标签（CI 也会按同样规则解析）
   const tag = getNpmTag(version);
+  console.log(chalk.bold(`npm dist-tag will be: ${tag}`));
 
   // 更新生成器包中的版本号
   console.log(chalk.bold('update generator packages'));
@@ -298,10 +241,8 @@ async function publishPackagesOneByOne(
     (await $`cd ${item.packagePath} ; npm version ${version} --no-git-tag-version`);
   }));
 
-  // 账号 2FA 开启后必须带 OTP；TOTP 约 30s 过期，不能用同一个 OTP 做 pnpm -r 连发
-  // 改为逐包 publish：复用当前 OTP，遇 EOTP 再重新输入
-  console.log(chalk.bold('publish packages (one by one, re-ask OTP on EOTP)'));
-  await publishPackagesOneByOne(publishPackagesInfo, tag, branch);
+  // 本地不再 npm publish：改由 GitHub Actions Trusted Publishing 发布
+  console.log(chalk.bold('skip local npm publish (GitHub Actions OIDC)'));
 
   // 提交更改
   console.log(chalk.bold('commit'));
@@ -311,7 +252,21 @@ async function publishPackagesOneByOne(
   console.log(chalk.bold('git tag'));
   await $`git tag v${version}`;
 
-  // 推送更改到远程仓库
-  console.log(chalk.bold('git push'));
+  // 推送到内网 GitLab（origin）
+  console.log(chalk.bold(`git push origin ${branch} --tags`));
   await $`git push origin ${branch} --tags`;
+
+  // 推送到 GitHub，触发 .github/workflows/publish.yml
+  await ensureGithubRemote();
+  console.log(chalk.bold(`git push ${githubRemoteName} ${branch} --tags`));
+  await $`git push ${githubRemoteName} ${branch} --tags`;
+
+  console.log(chalk.green(`\nRelease ${version} prepared.`));
+  console.log(chalk.bold('\nNext:'));
+  console.log(`1. Open https://github.com/${githubOwner}/${githubRepo}/actions and watch "Publish to npm"`);
+  console.log('2. Ensure each package below has Trusted Publisher → GitHub Actions:');
+  console.log(`   owner=${githubOwner}, repo=${githubRepo}, workflow=publish.yml, allow npm publish`);
+  publishPackagesInfo.forEach((item) => {
+    console.log(`   - ${item.packageJson.name}`);
+  });
 })();

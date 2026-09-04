@@ -1,7 +1,6 @@
 {
   "name": "generator-jumai-react-web",
   "version": "3.0.2-rc.3",
-  "private": true,
   "description": "",
   "files": [
     "generators"
