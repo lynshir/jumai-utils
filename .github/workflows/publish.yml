@@ -20,17 +20,20 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # 使用 Node 24 运行时的 action 版本，避免 Node 20 deprecated 警告
+      - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
           version: 9
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
           cache: pnpm
+          # setup-node@v5 在检测到 packageManager 时会自动开 npm 缓存；本仓用 pnpm，关掉避免干扰
+          package-manager-cache: false
 
       - name: Ensure npm CLI supports Trusted Publishing
         run: npm install -g npm@latest
