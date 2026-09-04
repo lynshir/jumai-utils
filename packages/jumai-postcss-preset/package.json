@@ -24,5 +24,10 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lynshir/jumai-utils",
+    "directory": "packages/jumai-postcss-preset"
   }
 }

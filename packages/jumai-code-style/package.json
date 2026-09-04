@@ -56,5 +56,10 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "gitHead": "9d6fc5c64358dbaebb223fabd58f0ab45c6fe124"
+  "gitHead": "9d6fc5c64358dbaebb223fabd58f0ab45c6fe124",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lynshir/jumai-utils",
+    "directory": "packages/jumai-code-style"
+  }
 }

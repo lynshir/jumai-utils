@@ -71,5 +71,10 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "gitHead": "e764dd3251d852c9b7879f4bcc5e50262648bda8"
+  "gitHead": "e764dd3251d852c9b7879f4bcc5e50262648bda8",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lynshir/jumai-utils",
+    "directory": "packages/jumai-bundler-cli"
+  }
 }
